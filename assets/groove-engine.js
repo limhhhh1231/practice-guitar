@@ -43,25 +43,25 @@ function rhythm(c,random){
  for(let n=1;n<=total;n++)can[n]=units.some(u=>{const d=u.durations.reduce((a,b)=>a+b,0);return d<=n&&can[n-d]});
  if(!can[total])throw Error('所选时值无法完整填满 '+c.meter+'，请加入四分或八分音符。');
  let cursor=0,events=[];const target={sparse:36,medium:16,dense:8}[c.density]*(c.difficulty==='easy'?1.6:c.difficulty==='hard'?.75:1);
- while(cursor<total){const candidates=units.filter(u=>{const d=u.durations.reduce((a,b)=>a+b,0);return d<=total-cursor&&can[total-cursor-d]});const weights=candidates.map(u=>{const avg=u.durations.reduce((a,b)=>a+b,0)/u.durations.length,end=cursor+u.durations.reduce((a,b)=>a+b,0),off=end%24!==0;const styleBonus=c.style==='funk'&&avg<=12?.9:c.style==='motown'&&avg===12?1.2:c.style==='rock'&&avg===24?1.3:c.style==='rnb'&&avg>=18?.8:c.style==='jazz'&&u.name.includes('triplet')?1.3:0;return 1/(1+Math.abs(Math.log2(avg/target)))+(off?c.sync/60:0)+styleBonus+(u.name==='sync'?c.sync/50:0)});let value=random()*weights.reduce((a,b)=>a+b,0),pick=candidates.at(-1);for(let i=0;i<candidates.length;i++){value-=weights[i];if(value<=0){pick=candidates[i];break}}
+ while(cursor<total){const candidates=units.filter(u=>{const d=u.durations.reduce((a,b)=>a+b,0);return d<=total-cursor&&can[total-cursor-d]});const weights=candidates.map(u=>{const avg=u.durations.reduce((a,b)=>a+b,0)/u.durations.length,end=cursor+u.durations.reduce((a,b)=>a+b,0),off=end%24!==0;const styleBonus=c.style==='funk'&&avg<=12?.9:c.style==='motown'&&avg===12?1.2:c.style==='rock'&&avg===24?1.3:c.style==='rnb'&&avg>=18?.8:c.style==='jazz'&&u.name.includes('triplet')?1.3:c.style==='bossa'&&(u.name==='eighth'||u.name==='sync'||u.name==='332')?1.45:0;return 1/(1+Math.abs(Math.log2(avg/target)))+(off?c.sync/60:0)+styleBonus+(u.name==='sync'?c.sync/50:0)});let value=random()*weights.reduce((a,b)=>a+b,0),pick=candidates.at(-1);for(let i=0;i<candidates.length;i++){value-=weights[i];if(value<=0){pick=candidates[i];break}}
  for(const duration of pick.durations){const off=cursor%24!==0;let rest=allowed.has('rest')&&random()<(cursor===0?.03:{sparse:.35,medium:.17,dense:.07}[c.density]);if(c.style==='reggae'&&allowed.has('rest')&&cursor%24===0)rest=random()<.8;events.push({start:cursor,duration,rest,material:pick.name,accent:cursor%(c.meter==='6/8'?36:24)===0,velocity:Math.min(1,(cursor%24===0?.9:.64)+(random()-.5)*(c.dynamics==='strong'?.32:.12)+(off?c.sync/100*.08:0))});cursor+=duration;}
  }
  if(events.every(e=>e.rest))events[0].rest=false;
  if(allowed.has('tie'))for(let i=0;i<events.length-1;i++){const a=events[i],b=events[i+1];if(!a.rest&&!b.rest&&random()<.3){a.duration+=b.duration;a.tie=true;events.splice(i+1,1)}}
  return events;
 }
-const styles={rock:{kick:[0,2],snare:[1,3],hat:.5},funk:{kick:[0,.75,2,2.75],snare:[1,3],hat:.5},motown:{kick:[0,1,2,3],snare:[1,3],hat:.5},rnb:{kick:[0,1.75,2.5],snare:[1,3],hat:.5},reggae:{kick:[2],snare:[2],hat:.5},jazz:{kick:[0,2],snare:[1,3],hat:1}};
-function drums(c,bars,seed){const random=rng(seed),profile=styles[c.style],result=[],total=ticks(c),quarterCount=total/24;bars.forEach((bar,b)=>{const add=(track,start,v)=>{if(start<total&&!result.some(e=>e.bar===b&&e.track===track&&e.start===start))result.push({bar:b,track,start,duration:6,velocity:Math.max(.15,Math.min(1,v+(random()-.5)*(c.dynamics==='strong'?.25:.1)))})};
- const kick=c.meter==='6/8'?[0,36]:profile.kick.map(q=>q*24).filter(t=>t<total),snare=c.meter==='6/8'?[36]:profile.snare.map(q=>q*24).filter(t=>t<total);
+const styles={rock:{kick:[0,2],snare:[1,3],hat:.5},funk:{kick:[0,.75,2,2.75],snare:[1,3],hat:.5},motown:{kick:[0,1,2,3],snare:[1,3],hat:.5},rnb:{kick:[0,1.75,2.5],snare:[1,3],hat:.5},reggae:{kick:[2],snare:[2],hat:.5},jazz:{kick:[0,2],snare:[1,3],hat:1},bossa:{kick:[0,1.5,2.5],snare:[1,3],hat:.5}};
+function drums(c,bars,seed){const random=rng(seed),profile=styles[c.style]||styles.rock,result=[],total=ticks(c),quarterCount=total/24;bars.forEach((bar,b)=>{const add=(track,start,v)=>{if(start<total&&!result.some(e=>e.bar===b&&e.track===track&&e.start===start))result.push({bar:b,track,start,duration:6,velocity:Math.max(.15,Math.min(1,v+(random()-.5)*(c.dynamics==='strong'?.25:.1)))})};
+ let kick=c.meter==='6/8'?[0,36]:profile.kick.map(q=>q*24).filter(t=>t<total),snare=c.meter==='6/8'?[36]:profile.snare.map(q=>q*24).filter(t=>t<total);if(c.style==='bossa'&&c.meter==='4/4'){kick=[0,36,48,84];snare=[12,36,60,84]}
  if(c.meter==='5/4')kick.push(96);if(c.meter==='3/4')snare.splice(0,snare.length,24);
  const onsets=bar.events.filter(e=>!e.rest).map(e=>e.start);
  kick.forEach(t=>{if(c.link!=='inverse'||!onsets.includes(t)||t===0)add('kick',t,t===0?.95:.75)});snare.forEach(t=>add('snare',t,.86));
  if(c.link==='tight')onsets.filter(t=>t%24!==0).forEach(t=>{if(random()<.65)add('kick',t,.75)});
  if(c.link==='balanced'&&random()<.65){const p=onsets.filter(t=>t%24!==0);if(p.length)add('kick',p[Math.floor(random()*p.length)],.7)}
  if(c.link==='inverse')for(let t=12;t<total;t+=12)if(!onsets.includes(t)&&random()<.5)add('kick',t,.75);
- const step=c.density==='dense'?6:c.density==='sparse'?24:12;
+ const step=c.style==='bossa'?12:c.density==='dense'?6:c.density==='sparse'?24:12;
  for(let t=0;t<total;t+=step)add('hat',t,t%24===0?.57:.36);
- if(c.style==='jazz')for(let t=16;t<total;t+=24)add('hat',t,.4);
+ if(c.style==='jazz')for(let t=16;t<total;t+=24)add('hat',t,.4);if(c.style==='bossa')for(let t=6;t<total;t+=12)add('hat',t,.23);
  if(c.difficulty!=='easy'&&c.density!=='sparse')for(const t of snare)if(t>=6&&random()<.6)add('snare',t-6,.22);
  if(c.difficulty==='hard'&&b===bars.length-1){add('snare',total-12,.52);add('snare',total-6,.7)}
  });return result.sort((a,b)=>a.bar-b.bar||a.start-b.start)}
