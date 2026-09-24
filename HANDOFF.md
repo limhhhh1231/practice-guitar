@@ -243,4 +243,7 @@ git diff --check
 - 统一构建 `node scripts/build.cjs`，同时更新现有绿色本地入口、旧本地入口、根首页和 publish 首页。四份页面已校验字节一致。
 - 六组测试全部通过，测试数据源均指向当前绿色版；全部内联脚本通过语法检查。`.DS_Store` 已忽略。
 - 根 README、本文件顶部与 green-ui README 已更新维护规则，历史记录不再决定当前构建入口。
-- 发布基线 `b33edbb`；本条随主版发布提交保存。推送/线上核验结果将在后续记录补充。
+- 发布基线 `b33edbb`；主版发布提交为 `96bcddbe63026f3993eca4f04ee5add2dc918c56`（Promote Studio Green with ear training to primary site），已成功推送 `origin/main`。
+- GitHub Pages workflow `35948636638`（pages build and deployment）已核实 `completed / success`。
+- 已通过 HTTPS 下载线上首页，与本地根 `index.html` 逐字节一致：899325 bytes，SHA-256 `7a7de5e7a2c45849957da835f2500ac40256b3436ab6e31a1d937a8f6a0f77cc`；确认包含绿色主色及 `EarTraining.init()`。这是发布文件验证，不等于设备音频/触控验收。
+- 第一次默认 Git push 返回 HTTP 400，核对远程未更新后，使用一次性参数 `git -c http.version=HTTP/1.1 -c http.postBuffer=10485760 push origin main` 成功；没有修改全局配置或强制推送。
