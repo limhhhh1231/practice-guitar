@@ -2,9 +2,9 @@
   'use strict';
   // Independent playback state; shared recordings and drum/timing rules.
   class EarPlayer {
-    constructor(status=()=>{}){this.status=status;this.context=null;this.buffers=new Map();this.sources=new Set();this.token=0;this.playing=false;this.timer=null;this.cycle=0;}
+    constructor(status=()=>{}){this.status=status;this.context=null;this.buffers=new Map();this.sources=new Set();this.token=0;this.playing=false;this.preparing=false;this.timer=null;this.cycle=0;}
     stop(message='已停止'){
-      this.token++;this.playing=false;clearInterval(this.timer);this.timer=null;
+      this.token++;this.playing=false;this.preparing=false;clearInterval(this.timer);this.timer=null;
       for(const source of this.sources){try{source.stop();}catch{}}
       this.sources.clear();this.status(message,false);
     }
@@ -12,26 +12,42 @@
       const C=root.AudioContext||root.webkitAudioContext;
       if(!C)throw Error('浏览器不支持音频播放。');
       if(!this.context||this.context.state==='closed'){
-        this.context=new C();this.master=this.context.createGain();this.master.gain.value=.55;this.master.connect(this.context.destination);
+        this.context=new C();this.master=this.context.createGain();this.master.gain.value=.72;this.master.connect(this.context.destination);
         this.buses={};for(const name of ['guitar','drum','click']){const bus=this.context.createGain();bus.connect(this.master);this.buses[name]=bus;}
       }
       this.settings={...settings};this.mix(settings);
       let timeout;
       try{await Promise.race([this.context.resume(),new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('音频启动超时，请点击播放重试。')),5000);})]);}finally{clearTimeout(timeout);}
-      const bank=root.GuitarSampleBank;
-      const jobs=Object.entries(bank.guitars.steel).map(([midi,data])=>['g'+midi,data]);
-      for(const [name,info]of Object.entries(bank.drums))jobs.push(['d'+name,info.data]);
-      await Promise.all(jobs.map(async([name,data])=>{
+      if(this.context.state!=='running')throw Error('浏览器未允许音频启动，请再次点击播放并确认设备未静音。');
+    }
+    async load(items){
+      const jobs=items.map(([name,data])=>{
         if(this.buffers.has(name))return this.buffers.get(name);
         const bytes=Uint8Array.from(atob(data.split(',')[1]),c=>c.charCodeAt(0));
-        const pending=this.context.decodeAudioData(bytes.buffer).then(buffer=>{
+        const pending=new Promise((resolve,reject)=>{
+          let settled=false;
+          const done=value=>{if(!settled){settled=true;resolve(value);}};
+          const fail=error=>{if(!settled){settled=true;reject(error);}};
+          try{
+            const result=this.context.decodeAudioData(bytes.buffer.slice(0),done,fail);
+            if(result&&typeof result.then==='function')result.then(done,fail);
+          }catch(error){fail(error);}
+        }).then(buffer=>{
           let peak=0;for(let ch=0;ch<buffer.numberOfChannels;ch++)for(const value of buffer.getChannelData(ch))peak=Math.max(peak,Math.abs(value));
           if(peak<.0001)throw Error('音色采样为空。');
           for(let ch=0;ch<buffer.numberOfChannels;ch++){const channel=buffer.getChannelData(ch);for(let i=0;i<channel.length;i++)channel[i]*=.85/peak;}
           this.buffers.set(name,buffer);return buffer;
         }).catch(error=>{this.buffers.delete(name);throw error;});
         this.buffers.set(name,pending);return pending;
-      }));
+      });
+      await Promise.all(jobs);
+    }
+    nearestRoot(midi){return Object.keys(root.GuitarSampleBank.guitars.steel).map(Number).sort((a,b)=>Math.abs(a-midi)-Math.abs(b-midi))[0];}
+    assets(plan){
+      const bank=root.GuitarSampleBank,items=new Map();
+      for(const item of plan.items)if(item.kind==='guitar'){const midi=this.nearestRoot(item.midi);items.set('g'+midi,bank.guitars.steel[midi]);}
+      else if(item.kind==='drum')items.set('d'+item.track,bank.drums[item.track].data);
+      return [...items];
     }
     mix(settings){
       Object.assign(this.settings||={},settings);
@@ -49,7 +65,7 @@
     }
     emit(item,time){
       if(item.kind==='guitar'){
-        const midi=Object.keys(root.GuitarSampleBank.guitars.steel).map(Number).sort((a,b)=>Math.abs(a-item.midi)-Math.abs(b-item.midi))[0];
+        const midi=this.nearestRoot(item.midi);
         this.sample(this.buffers.get('g'+midi),time,item.velocity,2**((item.midi-midi)/12),item.duration,'guitar');
       }else if(item.kind==='drum'){
         const kit=this.settings.kit,info=root.GuitarSampleBank.drums[item.track];
@@ -62,17 +78,20 @@
       }
     }
     async play(question,settings){
-      this.stop();const token=++this.token;this.playing=true;this.status('正在准备音色…',true);
+      this.stop();this.plan=null;this.firstStart=undefined;const token=++this.token;this.preparing=true;this.status('正在准备音色…','preparing');
       try{
-        await this.prepare(settings);if(token!==this.token)return;
         const E=root.GrooveEngine,plan=root.EarEngine.timeline(question,settings),c=plan.config,bar=E.ticks(c);
+        if(!plan.items.some(item=>item.kind==='guitar'))throw Error('当前练习没有可播放的吉他音符。');
         const intro=[],cueTicks=settings.cue?bar:0;
         if(settings.cue){const h=E.harmony({...c,voicing:'triad'},0);h.intervals.forEach((interval,i)=>intro.push({kind:'guitar',time:i*.02,duration:E.time(c,bar)*.8,midi:48+question.key+interval,velocity:.45}));}
         if(settings.clickMode!=='off')for(let t=0;t<bar*settings.countIn;t+=c.meter==='6/8'?36:24)intro.push({kind:'click',time:E.time(c,cueTicks+t),strong:t%bar===0});
+        await this.prepare(settings);if(token!==this.token)return;
+        this.status('正在载入本题音色…','preparing');
+        await this.load(this.assets({items:plan.items.concat(intro)}));if(token!==this.token)return;
         this.intro=intro.sort((a,b)=>a.time-b.time);this.introIndex=0;this.origin=this.context.currentTime+.08;
         this.start=this.origin+E.time(c,cueTicks+bar*settings.countIn);this.firstStart=this.start;
-        this.plan=plan;this.cycle=0;this.itemIndex=0;this.maxCycles=settings.repeats===0?Infinity:settings.repeats;
-        this.lastStatus='';this.tick();this.timer=setInterval(()=>this.tick(),25);
+        this.plan=plan;this.cycle=0;this.itemIndex=0;this.maxCycles=settings.repeats===0?Infinity:settings.repeats;this.preparing=false;this.playing=true;
+        this.lastStatus='';this.status('音频已启动 · 正在进入预备拍',true);this.tick();this.timer=setInterval(()=>this.tick(),25);
       }catch(error){if(token===this.token)this.stop('播放失败：'+error.message);}
     }
     tick(){
@@ -93,8 +112,8 @@
       }catch(error){this.stop('播放失败：'+error.message);}
     }
     async preview(midi,settings){
-      this.stop();const token=++this.token;
-      try{await this.prepare(settings);if(token!==this.token)return;this.emit({kind:'guitar',midi,duration:1,velocity:.8},this.context.currentTime+.03);}
+      this.stop();const token=++this.token;this.preparing=true;this.status('正在准备试听…','preparing');
+      try{await this.prepare(settings);if(token!==this.token)return;const rootMidi=this.nearestRoot(midi);await this.load([['g'+rootMidi,root.GuitarSampleBank.guitars.steel[rootMidi]]]);if(token!==this.token)return;this.preparing=false;this.emit({kind:'guitar',midi,duration:1,velocity:.8},this.context.currentTime+.03);this.status('已试听音符',false);}
       catch(error){if(token===this.token)this.stop('试听失败：'+error.message);}
     }
   }

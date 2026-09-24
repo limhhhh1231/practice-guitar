@@ -1,6 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 global.GrooveEngine=require('../green-ui/groove-engine.js');
 const E=global.GrooveEngine,C=require('../green-ui/practice-catalog.js'),G=require('../green-ui/ear-engine.js');
+require('../green-ui/sample-bank.js');
 assert.deepEqual(Object.keys(C.scales),Object.keys(E.scales));
 assert.equal(G.defaults.scale,'major');assert.equal(E.defaults.scale,'major');
 let cases=0;
@@ -49,6 +50,7 @@ const Player=require('../green-ui/ear-audio.js');
 async function playbackChecks(){
  const scheduled=[],statuses=[],p=new Player((s,playing)=>statuses.push({s,playing}));
  p.prepare=async function(settings){this.settings=settings;this.context={currentTime:0,state:'running'};};
+ p.load=async()=>{};
  p.emit=(item,time)=>scheduled.push({item,time});
  const question=G.generate({count:4,key:0,materials:['quarter']},9);
  for(const gap of [0,1,2])for(const repeats of [1,2,4]){
@@ -63,7 +65,10 @@ async function playbackChecks(){
  for(let i=0;i<800;i++){p.context.currentTime+=.025;p.tick();}
  assert.ok(p.playing);assert.ok(scheduled.length>4);p.stop();const length=scheduled.length;p.tick();assert.equal(scheduled.length,length);
  let unlock;const waiting=new Player();waiting.prepare=()=>new Promise(resolve=>{unlock=resolve;});waiting.emit=()=>{throw Error('cancelled playback must not emit');};
+ waiting.load=async()=>{};
  const pending=waiting.play(question,G.defaults);waiting.stop();unlock();await pending;assert.equal(waiting.playing,false);
+ const assets=p.assets(G.timeline(question,{...G.defaults,drums:false,clickMode:'off'}));
+ assert.ok(assets.length>0&&assets.length<=question.count);assert.ok(assets.every(([name])=>name.startsWith('g')));
  console.log('PASS audio clock: finite/infinite cycles, gaps, stop and asynchronous cancellation.');
 }
 playbackChecks().catch(error=>{console.error(error);process.exitCode=1;});

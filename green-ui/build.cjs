@@ -3,10 +3,10 @@ const path = require('node:path');
 const directory = __dirname;
 const project = path.resolve(directory, '..');
 let html = fs.readFileSync(path.join(directory, 'index.html'), 'utf8');
-for (const filename of ['sample-bank.js', 'groove-engine.js', 'practice-catalog.js', 'groove-app.js', 'fretboard-knowledge.js', 'chord-shapes.js', 'ear-engine.js', 'ear-audio.js', 'ear-app.js', 'green-ui.js']) {
+for (const filename of ['sample-bank.js', 'groove-engine.js', 'practice-catalog.js', 'groove-app.js', 'fretboard-knowledge.js', 'chord-shapes.js', 'ear-engine.js', 'ear-audio.js', 'ear-app.js', 'training-engine.js', 'training-score.js', 'training-studio.js', 'training-hub.js', 'green-ui.js']) {
   html = html.replace(`<script src="${filename}"></script>`, () => `<script>\n${fs.readFileSync(path.join(directory, filename), 'utf8')}\n</script>`);
 }
-for (const filename of ['groove.css', 'fretboard-knowledge.css', 'chord-shapes.css', 'green-ui.css', 'ear.css']) {
+for (const filename of ['groove.css', 'fretboard-knowledge.css', 'chord-shapes.css', 'green-ui.css', 'ear.css', 'training.css']) {
   html = html.replace(`<link rel="stylesheet" href="${filename}">`, () => `<style>\n${fs.readFileSync(path.join(directory, filename), 'utf8')}\n</style>`);
 }
 for (const filename of ['index.html', 'outputs/fretboard-lab.html', 'outputs/fretboard-lab-green.html', 'publish/index.html']) {

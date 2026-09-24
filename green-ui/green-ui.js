@@ -1,24 +1,18 @@
 /* Presentation only: retain native range inputs and their existing audio handlers. */
 (() => {
-  // The navigation is installed after all four tools have created their buttons.
-  const navigationIcons = {
-    navEar: '<path d="M8 8a5 5 0 0 1 10 0c0 4-5 4-5 8a3 3 0 0 1-6 0M11 8a2 2 0 0 1 4 0c0 2-3 2-3 5M21 6a9 9 0 0 1 0 6"/>',
-    navChord: '<path d="M3 19h18M5 15V9m7 3V6m7 3V3"/><circle cx="5" cy="15" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="9" r="2"/>',
-    navRhythm: '<path d="M3 12h3l3-7 5 14 3-7h4"/>',
-    navKnowledge: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m6-16v16M3 9h18M3 15h18"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/>',
-    navChordShapes: '<path d="M5 5h14M5 10h14M5 15h14M5 20h14M5 5v15M12 5v15M19 5v15"/><path d="M5 5h14" stroke-width="3"/><circle cx="5" cy="12.5" r="2" fill="currentColor" stroke="none"/><circle cx="12" cy="7.5" r="2" fill="currentColor" stroke="none"/><circle cx="19" cy="17.5" r="2" fill="currentColor" stroke="none"/>'
+  const navigationLabels = {
+    navToday: '练习',
+    navChord: '琶音',
+    navRhythm: '律动',
+    navEar: '听感',
+    navKnowledge: '指板',
+    navChordShapes: '和弦'
   };
-  Object.entries(navigationIcons).forEach(([id, drawing]) => {
+  Object.entries(navigationLabels).forEach(([id, shortLabel]) => {
     const button = document.getElementById(id);
     if (!button) return;
     const label = button.textContent.trim();
-    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    icon.setAttribute('viewBox', '0 0 24 24');
-    icon.setAttribute('class', 'studio-nav-icon');
-    icon.setAttribute('aria-hidden', 'true');
-    icon.setAttribute('focusable', 'false');
-    icon.innerHTML = drawing;
-    button.prepend(icon);
+    button.dataset.shortLabel = shortLabel;
     button.title = label;
     button.setAttribute('aria-label', label);
   });
