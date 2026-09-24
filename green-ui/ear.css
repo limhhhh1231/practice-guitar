@@ -1,0 +1,47 @@
+#earPanel[hidden], #earPanel [hidden] { display:none!important; }
+.et-settings,.et-session,.et-answer { margin-bottom:18px; }
+.et-settings-body,.et-session-body,.et-answer-body { padding:18px; }
+.et-fields { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; align-items:end; }
+.et-fields .field { min-width:0; }
+.et-fields select,.et-fields input[type=number] { width:100%; }
+.et-section { margin-top:18px; padding-top:18px; border-top:1px solid var(--line); }
+#earPanel h3 { font-size:14px; font-weight:600; margin:0 0 12px; }
+.et-choice { display:flex; align-items:center; gap:8px; min-height:44px; font-size:13px; color:var(--text); }
+.et-choice input { width:18px; height:18px; flex-shrink:0; }
+.et-help { font-size:13px; color:var(--muted); line-height:1.7; margin:12px 0; }
+.et-tempo-slider { margin:0; }
+.et-audio { margin:18px 0 0; }
+.et-volumes { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+.et-key-row { display:flex; gap:16px; align-items:center; justify-content:space-between; }
+.et-key-row strong { font-size:20px; color:var(--accent2); }
+#etStatus { padding:18px; background:#19231c; border:1px solid #405448; border-radius:5px; font-size:17px; min-height:60px; display:flex; align-items:center; }
+.et-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.et-actions .btn { min-height:48px; }
+#etPlay { min-width:130px; }
+.et-note-list { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.et-note { display:grid; gap:7px; justify-items:center; padding:14px 8px; border:1px solid #4d785b; border-radius:5px; background:#263b2d; color:var(--accent2); cursor:pointer; }
+.et-note strong { font:700 24px monospace; }
+.et-note b { font:600 16px monospace; }
+.et-note span,.et-note small { font-size:12px; }
+.et-note.et-root { border-color:var(--root); color:var(--root-soft); background:#213440; }
+.et-score-wrap,.et-board-wrap { overflow-x:auto; margin:18px 0; }
+.et-rhythm-bar { min-width:560px; display:grid; grid-template-columns:76px 1fr; align-items:center; gap:10px; margin-bottom:10px; font-size:12px; color:var(--muted); }
+.et-rhythm-lane { position:relative; height:48px; border:1px solid var(--line); background:repeating-linear-gradient(90deg,#1b251e 0,#1b251e calc(100% / var(--beats) - 1px),#445b4b calc(100% / var(--beats) - 1px),#445b4b calc(100% / var(--beats))); }
+.et-rhythm-event { position:absolute; top:6px; height:34px; border:2px solid #1b251e; background:var(--accent2); color:#102719; display:flex; align-items:center; justify-content:center; font:700 13px monospace; border-radius:4px; overflow:hidden; }
+.et-rhythm-event.et-rest { background:#333f36; color:var(--muted); }
+.et-timing summary { cursor:pointer; min-height:44px; padding:12px 0; color:var(--muted); font-size:13px; }
+.et-score { width:100%; border-collapse:collapse; text-align:left; font-variant-numeric:tabular-nums; }
+.et-score th,.et-score td { padding:10px 12px; border-bottom:1px solid var(--line); font-size:13px; white-space:nowrap; }
+.et-score caption { text-align:left; padding-bottom:12px; color:var(--muted); }
+.et-board-wrap { background:#202923; border:1px solid var(--line); border-radius:5px; }
+.et-board-wrap svg { display:block; width:100%; min-width:740px; }
+.et-wire { stroke:#8d9e91; stroke-width:1; }
+.et-fret { stroke:#58665c; stroke-width:1; }
+.et-board-label { fill:#bac6be; font:12px monospace; }
+.et-board-order { fill:#102719; font:700 10px monospace; }
+body.ear-focus .app { display:block; }
+body.ear-focus .app>.sidebar,body.ear-focus .topbar,body.ear-focus .et-settings,body.ear-focus .et-shortcut { display:none; }
+body.ear-focus .app>main { max-width:1300px; padding:18px; }
+body.ear-focus .et-session { position:sticky; top:0; z-index:5; }
+@media(max-width:1050px){.et-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }}
+@media(max-width:620px){.et-fields,.et-volumes { grid-template-columns:1fr; }.et-note-list { grid-template-columns:repeat(2,minmax(0,1fr)); }.et-key-row { flex-wrap:wrap; }.et-key-row strong { font-size:17px; }.et-settings-body,.et-session-body,.et-answer-body { padding:14px; }.et-actions .btn { flex:1 1 130px; }}

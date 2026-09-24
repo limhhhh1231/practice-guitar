@@ -1,4 +1,4 @@
-const assert=require('node:assert/strict'),E=require('../assets/groove-engine');
+const assert=require('node:assert/strict'),E=require('../green-ui/groove-engine');
 const config=extra=>({...E.defaults,materials:[...E.defaults.materials],bars:[0,3,4,0],...extra});
 for(const voicing of ['extension','mixed'])for(let degree=0;degree<7;degree++){
  const h=E.harmony(config({voicing,extension:0}),degree,2);

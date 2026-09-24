@@ -1,13 +1,3 @@
-const fs=require('fs'),path=require('path');
-let html=fs.readFileSync('index.html','utf8');
-for(const file of ['sample-bank.js','groove-engine.js','groove-app.js','fretboard-knowledge.js','chord-shapes.js'])html=html.replace('<script src="assets/'+file+'"></script>',()=>'<script>\n'+fs.readFileSync('assets/'+file,'utf8')+'\n</script>');
-html=html.replace('<link rel="stylesheet" href="assets/fretboard-knowledge.css">',()=>'<style>\n'+fs.readFileSync('assets/fretboard-knowledge.css','utf8')+'\n</style>');
-html=html.replace('<link rel="stylesheet" href="assets/groove.css">',()=>'<style>\n'+fs.readFileSync('assets/groove.css','utf8')+'\n</style>');
-html=html.replace('<link rel="stylesheet" href="assets/chord-shapes.css">',()=>'<style>\n'+fs.readFileSync('assets/chord-shapes.css','utf8')+'\n</style>');
-fs.mkdirSync('outputs/assets',{recursive:true});fs.writeFileSync('outputs/fretboard-lab.html',html);fs.copyFileSync('assets/ATTRIBUTION.md','outputs/assets/ATTRIBUTION.md');
-console.log('Built self-contained outputs/fretboard-lab.html:',Buffer.byteLength(html),'bytes');
-fs.mkdirSync('publish/assets',{recursive:true});
-fs.writeFileSync('publish/index.html',html);
-fs.copyFileSync('assets/ATTRIBUTION.md','publish/assets/ATTRIBUTION.md');
-fs.writeFileSync('publish/.nojekyll','');
-console.log('GitHub Pages release ready: publish/');
+// Studio Green is the canonical source from 2026-09-24 onward.
+// The root index.html is generated output, never build input.
+require('../green-ui/build.cjs');

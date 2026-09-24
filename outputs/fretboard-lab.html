@@ -159,9 +159,362 @@ body.score-focus .app>main{max-width:none;padding:12px;width:100%}
 @media(max-width:620px){.cs-catalog{grid-template-columns:repeat(2,minmax(140px,1fr))}}
 
 </style>
+<style>
+/* Independent Studio Green skin. Music, transport and audio use the copied engine. */
+:root {
+  color-scheme: dark;
+  --bg: #191b1a;
+  --panel: #252826;
+  --panel2: #2d302e;
+  --line: #404540;
+  --muted: #a3aba5;
+  --text: #edf0ed;
+  --accent: #35ce68;
+  --accent2: #85dfa1;
+  --root: #65b8ed;
+  --root-soft: #b1dcf7;
+  --studio-inset: #1b1e1c;
+  --studio-edge: inset 0 1px 0 #ffffff08, 0 2px 5px #0002;
+}
+body {
+  background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: #35ce6850; color: #fff; }
+button, input, select, summary { -webkit-tap-highlight-color: transparent; }
+button, input, select { accent-color: var(--accent); }
+button, select, input[type=number] { font-variant-numeric: tabular-nums; }
+button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible,
+.switch:focus-visible, .platform-brand:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 3px;
+}
+.app { grid-template-columns: 206px minmax(0, 1fr); }
+.sidebar { background: #202321; padding: 24px 14px; gap: 30px; border-color: #363c37; }
+.platform-brand { gap: 9px; }
+.platform-name { font-size: 16px; white-space: nowrap; }
+.platform-brand:after { width: 22px; background: #2c302d; box-shadow: var(--studio-edge); }
+.mark, .platform-brand .mark {
+  border-radius: 6px; background: linear-gradient(155deg, #58de82, #27b759);
+  color: #102517; border: 1px solid #62dd8a;
+  box-shadow: inset 0 1px 1px #d6ffe34a, 0 2px 4px #0004;
+}
+.guitar-logo { width: 21px; height: 21px; display: block; color: #102719; fill: currentColor; }
+.title-lockup > .mark .guitar-logo { width: 22px; height: 22px; }
+.tool-nav { gap: 8px; }
+.studio-nav-icon {
+  display: none; width: 23px; height: 23px; flex-shrink: 0;
+  fill: none; stroke: currentColor; stroke-width: 1.6;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.sidebar-collapsed .tool-nav button[id]::before { content: none; }
+.sidebar-collapsed .tool-nav button {
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; min-height: 46px; padding: 10px;
+}
+.sidebar-collapsed .studio-nav-icon { display: block; }
+.tool-nav button { min-height: 46px; border-radius: 5px; font-size: 13px; }
+.tool-nav button:hover { background: #2c312d; border-color: #4b554d; }
+.tool-nav button.active {
+  background: linear-gradient(110deg, #294032, #27312a);
+  border-color: #426c4d; color: #c7f6d5; box-shadow: inset 3px 0 var(--accent);
+}
+.menu-label { color: #7f8b82; font-size: 10px; letter-spacing: .17em; padding-left: 12px; margin-bottom: 14px; }
+.app > main { padding: 26px 30px 42px; max-width: 1550px; }
+.topbar { align-items: center; margin-bottom: 24px; padding-bottom: 22px; border-bottom: 1px solid #363c37; }
+.topbar h1 { font-size: 27px; font-weight: 600; letter-spacing: .02em; }
+.title-lockup { gap: 13px; }
+.title-lockup > .mark { width: 34px; height: 34px; }
+.status.credit { background: #222e25; color: #b0c6b6; border-color: #405247; border-radius: 4px; font-size: 11px; }
+.status.credit:before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px #35ce6840; }
+.controls, .card, .groove-settings, .result-card, .audio-options, .speed-ladder, .motif-modal, .cs-intro {
+  border-radius: 7px; border-color: var(--line); background: var(--panel); box-shadow: var(--studio-edge);
+}
+.controls { padding: 16px; gap: 12px; margin-bottom: 18px; }
+.field label, .ladder-grid label, .slider-label { color: #adb5ae; }
+.field select, .field input[type=number], .groove-layout select, .groove-layout input[type=number],
+.ladder-grid input, .ik-controls select, .cs-intro select {
+  min-height: 42px; border-radius: 4px; border: 1px solid #444b45;
+  background: linear-gradient(#1c1f1d, #222623); color: var(--text);
+  box-shadow: inset 0 1px 3px #0004; padding: 9px 10px;
+}
+select:hover, input[type=number]:hover { border-color: #637167; }
+/* Native popup menus need solid option colors; the closed field's gradient
+   does not supply a background to the browser's separate option surface. */
+select { color-scheme: dark; }
+select option, select optgroup {
+  background-color: #222623;
+  color: #edf0ed;
+}
+select option:checked {
+  background-color: #30543c;
+  color: #f4fff7;
+}
+select option:disabled, select optgroup:disabled {
+  color: #909b93;
+}
+.btn, .rhythm-chip, .segmented button, .result-bar header button, .modal-close, .stroke {
+  border: 1px solid #4b514c; border-radius: 5px; color: #c9d0ca;
+  background: linear-gradient(180deg, #373c38, #2b302c);
+  box-shadow: inset 0 1px 0 #ffffff0c, 0 2px 2px #0002;
+  transition: background .12s, border-color .12s, box-shadow .12s;
+}
+.btn:hover, .rhythm-chip:hover, .segmented button:hover { border-color: #758279; background: #3b433d; color: #f0f5f1; }
+.btn:active, .rhythm-chip:active { box-shadow: inset 0 2px 4px #0005; }
+.btn.primary, .motif-actions .btn.primary, .segmented .active, .ik-view-toggle button.active {
+  background: linear-gradient(180deg, #48d677, #2bbb5c); border-color: #65dd8c; color: #102719;
+  box-shadow: inset 0 1px 0 #d8ffe53b, 0 2px 3px #0003; font-weight: 700;
+}
+.btn.primary:hover { background: linear-gradient(#65e58e, #38cc6a); border-color: #a0efb9; }
+.rhythm-chip.active, .transport .active, .audio-options > .btn.active {
+  background: #283e2f; border-color: #4b865d; color: #a4e9ba;
+  box-shadow: inset 0 1px 2px #0003;
+}
+.rhythm-chip.active:before { content: ''; display: inline-block; width: 5px; height: 5px; margin-right: 6px; background: var(--accent); border-radius: 50%; vertical-align: middle; }
+.card-head, .result-card > header, .settings-header { background: linear-gradient(#2d322e, #282c29); border-color: var(--line); }
+.card-head h2, .result-card h2 { font-weight: 600; }
+.badge { border-color: #4a554d; color: #b0bcb3; border-radius: 3px; }
+.small, .range-labels { color: var(--muted); }
+
+/* Quiet graphite fingerboard: every fret boundary has the same treatment. */
+.fret-wrap { padding: 22px 20px; background: #1e221f; }
+.strings { background: linear-gradient(180deg, #343b35, #2c322d); border-color: #768478; }
+.string { border-color: #222b24; }
+.string:before { background: linear-gradient(#b0b8b1, #6e7b71); box-shadow: 0 1px 1px #0008; }
+.fret, .fret:nth-child(4) { border-right: 2px solid #748077; background: transparent; box-shadow: none; }
+.fret:first-child { border-left-color: #8f9b91; }
+.fret:nth-child(3)::after,.fret:nth-child(5)::after,.fret:nth-child(7)::after,.fret:nth-child(9)::after,
+.fret:nth-child(12)::before,.fret:nth-child(12)::after { background: #a0aca1; border-color: #b0bab0; box-shadow: none; opacity: .6; }
+.nut { background: #bbc4bb; }
+.note.scale { color: #c1ddc8; background: #344e3d; border-color: #60816a; }
+.note.chord { color: #13291b; background: var(--accent2); border-color: #b0efc3; border-radius: 5px; }
+.note.root, .note.chord.root { color: #082037; background: var(--root); border-color: var(--root-soft); }
+.note.open-muted { color: #8b968e; background: #272d28; border-color: #454e47; }
+.chords { gap: 12px; padding: 14px; }
+.chords .chord { background: #2b302c; border-color: #49544b; border-radius: 5px; padding: 16px; gap: 11px; box-shadow: inset 0 1px #ffffff06; }
+.chords .chord:hover { background: #303a32; border-color: #72917b; }
+.chords .chord.selected { background: linear-gradient(135deg, #2e4435, #27382c); border-color: #59b274; box-shadow: inset 3px 0 var(--accent); }
+.chord-note-row span { font-size: 20px; }
+.chord-degree-row span { font-size: 18px; }
+.chord-interval-row span { font-size: 12px; }
+.chords .chord .name { font-size: 16px; }
+.chords .chord .roman { color: #a4d6b2; }
+.legend .s { background: #60816a; }
+.switch { background: #171c18; border: 1px solid #536058; box-shadow: inset 0 1px 3px #0006; }
+.switch i { width: 14px; height: 14px; background: linear-gradient(#e5eae6,#919d94); box-shadow: 0 1px 3px #0009; }
+.switch.on { background: #28603b; border-color: #59a770; }
+.switch.on i { background: #95e6af; }
+
+/* Native input ranges keep touch/keyboard semantics; only the rail and cap change. */
+input[type=range] {
+  --studio-fill: 50%; -webkit-appearance: none; appearance: none; border: 0;
+  height: 38px; min-height: 38px; margin: 3px 0; padding: 0 1px; cursor: ew-resize;
+  background: repeating-linear-gradient(90deg, #69776c 0 1px, transparent 1px 10%) left 3px / 100% 5px no-repeat,
+              repeating-linear-gradient(90deg, #69776c 0 1px, transparent 1px 10%) left 30px / 100% 5px no-repeat;
+  touch-action: pan-y;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  height: 7px; border-radius: 3px; border: 1px solid #111812;
+  background: linear-gradient(90deg, #389c58 var(--studio-fill), #121713 var(--studio-fill));
+  box-shadow: 0 1px 0 #ffffff12, inset 0 1px 2px #0008;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 27px; margin-top: -11px; border-radius: 3px;
+  border: 1px solid #9ea89f;
+  background: linear-gradient(180deg, #9ea89f 0, #737e76 42%, #d7e0d9 43% 49%, #343d36 50% 56%, #68736b 57%, #88968c 100%);
+  box-shadow: 0 2px 4px #0009, inset 0 1px #e1e9e373;
+}
+input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: #121713; border: 1px solid #111812; }
+input[type=range]::-moz-range-progress { height: 6px; background: #389c58; }
+input[type=range]::-moz-range-thumb { width: 18px; height: 25px; border-radius: 3px; border: 1px solid #9ea89f; background: linear-gradient(#9ea89f,#647269 45%,#d7e0d9 46% 53%,#647269 54%,#88968c); box-shadow: 0 2px 4px #0009; }
+input[type=range]:disabled { opacity: .45; cursor: default; }
+.range-row span:last-child, .slider-label output, .motif-volume output, .studio-volume-value {
+  color: #a0e3b3; font: 500 13px 'DM Mono', monospace; font-variant-numeric: tabular-nums;
+  padding: 4px 7px; background: #19231c; border: 1px solid #405448; border-radius: 3px;
+}
+.range-row { align-items: center; margin-bottom: 3px; }
+.slider-label { align-items: center; }
+.mixer label:has(.studio-volume-value) { grid-template-columns: 1fr auto; align-items: center; }
+.mixer label > input { grid-column: 1 / -1; }
+
+.settings-header { padding: 12px 16px; }
+.groove-title { font-size: 17px; letter-spacing: .03em; }
+.groove-title:before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; vertical-align: middle; margin-right: 10px; box-shadow: 0 0 6px #35ce6825; }
+.settings-columns { align-items: stretch; grid-template-columns: 1fr 1fr 1.1fr; }
+.settings-columns > div + div { border-left: 1px solid var(--line); }
+.settings-columns section, .groove-settings > section { padding: 16px; }
+.groove-settings h3 { font: 600 12px -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; letter-spacing: .035em; color: #b4c2b8; }
+.settings-columns .control-grid { gap: 12px; }
+.settings-materials { background: #242a25; }
+.settings-columns .harmony-edit { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.harmony-edit > div { background: var(--studio-inset); border-color: #465149; border-radius: 4px; }
+.harmony-edit > div select { padding: 6px; border: 0; background: transparent; box-shadow: none; }
+.segmented { gap: 4px; }
+.sequence-section { background: #202622; }
+.sequence-section.sequence-on { box-shadow: inset 3px 0 var(--accent); background: #26382b; }
+.sequence-dock { background: transparent; padding: 16px 0 0; margin-top: 14px; }
+.switch-row input { border-color: #536058; background: #181e19; box-shadow: inset 0 2px 4px #0004; }
+.switch-row input::after { background: linear-gradient(#e0e6e1,#929e95); box-shadow: 0 1px 2px #0008; }
+.switch-row input:checked { background: #287042; border-color: #4ca367; }
+.switch-row input:checked::after { background: #b8f2ca; }
+.speed-ladder, .audio-options { padding: 14px 16px; margin: 0 0 16px; }
+.speed-ladder summary, .audio-options summary { color: #c4d0c7; font-size: 14px; min-height: 34px; }
+.audio-options > summary {
+  display: flex; align-items: center; gap: 8px;
+  min-height: 34px; line-height: 20px; margin: 0; padding: 0;
+  list-style: none;
+}
+.audio-options > summary::-webkit-details-marker { display: none; }
+.audio-options > summary::before {
+  content: ''; flex: 0 0 6px; width: 6px; height: 6px;
+  border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg); margin-right: 2px;
+}
+.audio-options[open] > summary { margin-bottom: 12px; }
+.audio-options[open] > summary::before { transform: rotate(45deg); }
+.audio-options > .mixer:last-child { margin-bottom: 0; }
+.ladder-grid { gap: 12px; }
+.ladder-grid label { font-size: 12px; }
+.speed-ladder.ladder-active { border-color: #569568; box-shadow: inset 3px 0 var(--accent); }
+.speed-ladder.ladder-active summary, .speed-ladder.ladder-active .ladder-actions span { color: #a2eab9; }
+.speed-ladder #ggLadderStatus { border-radius: 4px; background: #1c241f; }
+.speed-ladder.ladder-active #ggLadderStatus { color: #a2eab9; border-color: #569568; background: #24422d; }
+.mixer { gap: 12px; }
+.mixer > div { background: linear-gradient(#303631,#282e29); border-radius: 5px; padding: 14px; border-color: #48534b; }
+.practice-options { gap: 12px; margin-bottom: 10px; }
+.practice-options input[type=checkbox] { width: 17px; height: 17px; }
+.practice-dock {
+  background: linear-gradient(#303631f5, #252b27fa); border: 1px solid #505e53; border-bottom: 0;
+  border-radius: 8px 8px 0 0; box-shadow: 0 -8px 28px #0005, inset 0 1px #ffffff0a;
+  gap: 8px; padding-top: 12px;
+}
+#ggTempoDisplay { color: #abefc0; background: #141e17; border: 1px solid #425b49; border-radius: 4px; padding: 10px 12px; font: 500 15px 'DM Mono', monospace; text-align: center; }
+.practice-dock #ggPhase { color: #b2c8b9; font-weight: 500; font-size: 13px; }
+.practice-dock #ggPlay { min-width: 110px; font-size: 16px; }
+.result-bar, .motif-step, .motif-tone, .ik-card, .ik-combined-board, .cs-card { background: #222924; border-color: #455249; border-radius: 5px; }
+.result-bar { padding: 14px; }
+.result-bars { gap: 12px; padding: 14px; }
+.result-bar.playing { background: #26382b; border-color: #65ba7d; box-shadow: inset 3px 0 var(--accent); }
+.lane { border-bottom-color: #3d4940; background: repeating-linear-gradient(90deg,transparent 0,transparent calc(25% - 1px),#39473d calc(25% - 1px),#39473d 25%); }
+.drum-grid { background: repeating-linear-gradient(90deg,#1c251f 0,#1c251f calc(25% - 1px),#3b4940 calc(25% - 1px),#3b4940 25%); }
+.event { border-radius: 3px; box-shadow: inset 0 1px #ffffff30; }
+.event.sounding { outline-color: #e9fff0; box-shadow: 0 0 9px #97ffb550; }
+.chord-diagram { background: #19231c; }
+.fret-string button { background: #39483c; color: #c1cfc4; border-right-color: #7e9283; border-bottom-color: #273b2d; }
+.daily-plan-card { background: linear-gradient(125deg, #2c4132, #252e29); border-color: #52715b; border-radius: 5px; }
+.daily-plan-card header strong, .daily-plan-card footer span { background: #1c291f; border-radius: 4px; }
+.daily-plan-grid > div { background: #1b281fcc; border-radius: 4px; }
+.warning-note { background: #373022; color: #efd2a1; border-color: #d5ab61; }
+.error-note { background: #3b2426; color: #ffc4c4; border-color: #dc8181; }
+.motif-head { background: #2b322d; }
+.motif-hint { background: #1d2921; }
+.modal-backdrop { background: #0c130fe0; }
+.ik-view-toggle { background: #1c241e; border-radius: 5px; }
+.ik-section table thead { background: #29362d; }
+.ik-section th, .ik-section td { border-color: #3c4940; }
+.ik-section tr:hover { background: #ffffff03; }
+.cs-root { fill: var(--root); }
+.cs-tone { fill: var(--accent2); }
+.cs-open-circle { fill: #222e26; }
+.cs-row-title { background: #1d251f; }
+.cs-book-title h2, .ik-section h2 { font-size: 21px; font-weight: 600; }
+.ik-tip { border-left-color: var(--accent); }
+@media (min-width: 1101px) { .side { grid-template-columns: minmax(0,1fr) 285px; gap: 18px; margin-top: 18px; } }
+@media (max-width: 1100px) {
+  .app { grid-template-columns: 180px minmax(0,1fr); }
+  .app > main { padding: 20px 18px 36px; }
+  .settings-columns { grid-template-columns: 1fr 1fr; }
+  .settings-columns > div:last-child { border-left: 0; }
+  .settings-columns .harmony-edit { grid-template-columns: repeat(4,minmax(0,1fr)); }
+}
+@media (max-width: 820px) {
+  .app { display: block; }
+  .sidebar { padding: 14px 18px; }
+  .tool-nav { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .sidebar > div:nth-child(2) { margin-top: 12px; }
+  .topbar h1 { font-size: 23px; }
+  .topbar { gap: 12px; padding-bottom: 18px; margin-bottom: 18px; }
+  .controls { gap: 14px; }
+  .field select, .groove-layout select, .groove-layout input[type=number], .btn { min-height: 44px; }
+  .settings-columns section { padding: 14px; }
+  .settings-columns .rhythm-chip { min-height: 42px; }
+  input[type=range] { min-height: 44px; height: 44px; background-position: left 6px,left 33px; }
+  .fret-wrap { padding: 18px 14px; }
+  .legend { flex-wrap: wrap; gap: 10px 14px; }
+  .app.sidebar-collapsed { display: grid; grid-template-columns: 62px minmax(0,1fr); }
+  .sidebar-collapsed .sidebar { position: sticky; height: 100dvh; top: 0; padding: 14px 6px; }
+  .sidebar-collapsed .tool-nav { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .app > main { padding: 18px 12px 32px; }
+  .topbar { display: flex; flex-wrap: wrap; }
+  .topbar h1 { font-size: 20px; }
+  .status.credit { margin: 0; padding: 7px; }
+  .title-lockup { gap: 9px; }
+  .settings-columns { grid-template-columns: minmax(0,1fr); }
+  .settings-columns > div + div { border-left: 0; }
+  .settings-columns .harmony-edit { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .settings-header { padding: 12px; gap: 10px; }
+  .settings-header .groove-title { flex-basis: 100%; }
+  .mixer { grid-template-columns: minmax(0,1fr); }
+  .chords .chord { padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *:before, *:after { transition: none !important; } }
+
+</style>
+<style>
+#earPanel[hidden], #earPanel [hidden] { display:none!important; }
+.et-settings,.et-session,.et-answer { margin-bottom:18px; }
+.et-settings-body,.et-session-body,.et-answer-body { padding:18px; }
+.et-fields { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; align-items:end; }
+.et-fields .field { min-width:0; }
+.et-fields select,.et-fields input[type=number] { width:100%; }
+.et-section { margin-top:18px; padding-top:18px; border-top:1px solid var(--line); }
+#earPanel h3 { font-size:14px; font-weight:600; margin:0 0 12px; }
+.et-choice { display:flex; align-items:center; gap:8px; min-height:44px; font-size:13px; color:var(--text); }
+.et-choice input { width:18px; height:18px; flex-shrink:0; }
+.et-help { font-size:13px; color:var(--muted); line-height:1.7; margin:12px 0; }
+.et-tempo-slider { margin:0; }
+.et-audio { margin:18px 0 0; }
+.et-volumes { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+.et-key-row { display:flex; gap:16px; align-items:center; justify-content:space-between; }
+.et-key-row strong { font-size:20px; color:var(--accent2); }
+#etStatus { padding:18px; background:#19231c; border:1px solid #405448; border-radius:5px; font-size:17px; min-height:60px; display:flex; align-items:center; }
+.et-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.et-actions .btn { min-height:48px; }
+#etPlay { min-width:130px; }
+.et-note-list { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.et-note { display:grid; gap:7px; justify-items:center; padding:14px 8px; border:1px solid #4d785b; border-radius:5px; background:#263b2d; color:var(--accent2); cursor:pointer; }
+.et-note strong { font:700 24px monospace; }
+.et-note b { font:600 16px monospace; }
+.et-note span,.et-note small { font-size:12px; }
+.et-note.et-root { border-color:var(--root); color:var(--root-soft); background:#213440; }
+.et-score-wrap,.et-board-wrap { overflow-x:auto; margin:18px 0; }
+.et-rhythm-bar { min-width:560px; display:grid; grid-template-columns:76px 1fr; align-items:center; gap:10px; margin-bottom:10px; font-size:12px; color:var(--muted); }
+.et-rhythm-lane { position:relative; height:48px; border:1px solid var(--line); background:repeating-linear-gradient(90deg,#1b251e 0,#1b251e calc(100% / var(--beats) - 1px),#445b4b calc(100% / var(--beats) - 1px),#445b4b calc(100% / var(--beats))); }
+.et-rhythm-event { position:absolute; top:6px; height:34px; border:2px solid #1b251e; background:var(--accent2); color:#102719; display:flex; align-items:center; justify-content:center; font:700 13px monospace; border-radius:4px; overflow:hidden; }
+.et-rhythm-event.et-rest { background:#333f36; color:var(--muted); }
+.et-timing summary { cursor:pointer; min-height:44px; padding:12px 0; color:var(--muted); font-size:13px; }
+.et-score { width:100%; border-collapse:collapse; text-align:left; font-variant-numeric:tabular-nums; }
+.et-score th,.et-score td { padding:10px 12px; border-bottom:1px solid var(--line); font-size:13px; white-space:nowrap; }
+.et-score caption { text-align:left; padding-bottom:12px; color:var(--muted); }
+.et-board-wrap { background:#202923; border:1px solid var(--line); border-radius:5px; }
+.et-board-wrap svg { display:block; width:100%; min-width:740px; }
+.et-wire { stroke:#8d9e91; stroke-width:1; }
+.et-fret { stroke:#58665c; stroke-width:1; }
+.et-board-label { fill:#bac6be; font:12px monospace; }
+.et-board-order { fill:#102719; font:700 10px monospace; }
+body.ear-focus .app { display:block; }
+body.ear-focus .app>.sidebar,body.ear-focus .topbar,body.ear-focus .et-settings,body.ear-focus .et-shortcut { display:none; }
+body.ear-focus .app>main { max-width:1300px; padding:18px; }
+body.ear-focus .et-session { position:sticky; top:0; z-index:5; }
+@media(max-width:1050px){.et-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }}
+@media(max-width:620px){.et-fields,.et-volumes { grid-template-columns:1fr; }.et-note-list { grid-template-columns:repeat(2,minmax(0,1fr)); }.et-key-row { flex-wrap:wrap; }.et-key-row strong { font-size:17px; }.et-settings-body,.et-session-body,.et-answer-body { padding:14px; }.et-actions .btn { flex:1 1 130px; }}
+
+</style>
 </head>
 <body>
-<div class="app"><aside class="sidebar"><div class="platform-brand"><div class="mark" aria-hidden="true">♬</div><span class="platform-name">一起练琴吧</span></div><div><div class="menu-label">练习工具</div><nav class="tool-nav" aria-label="练习工具导航"><button class="active" id="navChord" type="button">和弦琶音练习</button><button id="navRhythm" type="button">吉他律动生成器</button></nav></div><div class="sidebar-note">把每天的练习拆成一个小节，先听，再弹，慢慢建立稳定律动。</div></aside><main><div class="topbar"><div class="title-area"><div class="title-lockup"><div class="mark" role="img" aria-label="和弦琶音练习工具">♬</div><div class="title-copy"><div class="title-line"><h1 id="pageTitle">和弦琶音练习工具</h1></div></div></div><p id="pageSubtitle">探索调内七和弦，在指板上锁定你的下一个把位。</p></div><div class="status credit" aria-label="作者注释">LIM 制作</div></div>
+<div class="app"><aside class="sidebar"><div class="platform-brand"><div class="mark" aria-hidden="true"><svg class="guitar-logo" viewBox="0 0 40 40" focusable="false" aria-hidden="true"><path fill-rule="evenodd" d="M17 3h6v6h-1v6c4-2 7 1 6 4-.8 2-2 3 0 5 3 3 3 6 1 9-3 4-15 4-18 0-2-3-2-6 1-9 2-2 .8-3 0-5-1-3 2-6 6-4V9h-1V3Zm6 21a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path d="M17 31h6M20 10v10" fill="none" stroke="#45d577" stroke-width="1.3" stroke-linecap="round"/></svg></div><span class="platform-name">一起练琴吧</span></div><div><div class="menu-label">练习工具</div><nav class="tool-nav" aria-label="练习工具导航"><button class="active" id="navChord" type="button">和弦琶音练习</button><button id="navRhythm" type="button">吉他律动生成器</button></nav></div><div class="sidebar-note">把每天的练习拆成一个小节，先听，再弹，慢慢建立稳定律动。</div></aside><main><div class="topbar"><div class="title-area"><div class="title-lockup"><div class="mark" role="img" aria-label="吉他图标"><svg class="guitar-logo" viewBox="0 0 40 40" focusable="false" aria-hidden="true"><path fill-rule="evenodd" d="M17 3h6v6h-1v6c4-2 7 1 6 4-.8 2-2 3 0 5 3 3 3 6 1 9-3 4-15 4-18 0-2-3-2-6 1-9 2-2 .8-3 0-5-1-3 2-6 6-4V9h-1V3Zm6 21a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path d="M17 31h6M20 10v10" fill="none" stroke="#45d577" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="title-copy"><div class="title-line"><h1 id="pageTitle">和弦琶音练习工具</h1></div></div></div><p id="pageSubtitle">探索调内七和弦，在指板上锁定你的下一个把位。</p></div><div class="status credit" aria-label="作者注释">LIM 制作</div></div>
 <section class="rhythm-panel" id="rhythmPanel"></section>
 <section class="controls"><div class="field"><label>调式根音</label><select id="root"><option>C</option><option>C♯</option><option>D</option><option>E♭</option><option>E</option><option>F</option><option>F♯</option><option>G</option><option>A♭</option><option>A</option><option>B♭</option><option>B</option></select></div><div class="field"><label>调式</label><select id="mode"><option value="major">Ionian · 大调</option><option value="dorian">Dorian · 多利亚</option><option value="mixolydian">Mixolydian · 混合利底亚</option><option value="minor">Aeolian · 自然小调</option></select></div><div class="field"><label>显示</label><select id="display"><option value="scale">调式音阶</option><option value="chord">当前和弦</option></select></div><div class="field"><label>简谱标记</label><select id="notation"><option value="movable">首调 · 和弦 1–3–5–7</option><option value="fixed">固定调 · C=1</option></select></div><div class="spacer"></div><button class="btn" id="motifBtn" type="button" aria-haspopup="dialog" aria-controls="motifModal">♫ 生成动机训练</button><button class="btn" id="reset" type="button">重置</button><button class="btn primary" id="play" type="button">▶ 播放琶音</button></section>
 <div class="grid"><section class="card"><div class="card-head"><h2 id="boardTitle">C Ionian · 0 — 12 品</h2><span class="small">E A D G B E</span></div><div class="fret-wrap"><div class="fretboard"><div class="frets" id="frets"></div><div class="open-label">0</div><div class="strings" id="strings"></div><div class="nut"></div><div class="open-notes" id="openNotes"></div><div class="notes" id="notes"></div></div></div><div class="legend"><span><b></b><span id="rootLegend">调式根音</span></span><span><b class="s"></b>调式音</span><span><b class="c"></b>和弦音</span><span class="small" style="margin-left:auto">0 品为空弦；点击和弦查看琶音指型</span></div></section>
@@ -277,12 +630,28 @@ const api={mod,names,scales,materials,patterns,defaults,ticks,time,seconds,harmo
 
 </script>
 <script>
+(function(root){
+  'use strict';
+  const E=root.GrooveEngine;
+  const scales={major:'Ionian · 大调',minor:'Aeolian · 自然小调',dorian:'Dorian · 多利亚',mixolydian:'Mixolydian · 混合利底亚',phrygian:'Phrygian · 弗里几亚',lydian:'Lydian · 利底亚',locrian:'Locrian · 洛克里亚',majorPent:'Major Pentatonic · 大调五声',minorPent:'Minor Pentatonic · 小调五声',blues:'Blues · 布鲁斯'};
+  const styles={funk:'Funk',rock:'Rock',motown:'Motown',rnb:'R&B / Neo Soul',reggae:'Reggae',jazz:'Jazz Swing',bossa:'Bossa Nova'};
+  const materials={whole:'全音符',half:'二分音符',quarter:'四分音符',eighth:'八分音符',sixteenth:'十六分音符','dotted-half':'附点二分','dotted-quarter':'附点四分','dotted-eighth':'附点八分','half-triplet':'二分三连音','quarter-triplet':'四分三连音','eighth-triplet':'八分三连音','sixteenth-triplet':'十六分三连音',tie:'跨拍延音',shuffle:'Shuffle',sync:'十六分切分','332':'3-3-2 分组',rest:'休止'};
+  const degrees={major:['1','2','3','4','5','6','7'],minor:['1','2','♭3','4','5','♭6','♭7'],dorian:['1','2','♭3','4','5','6','♭7'],mixolydian:['1','2','3','4','5','6','♭7'],phrygian:['1','♭2','♭3','4','5','♭6','♭7'],lydian:['1','2','3','♯4','5','6','7'],locrian:['1','♭2','♭3','4','♭5','♭6','♭7'],majorPent:['1','2','3','5','6'],minorPent:['1','♭3','4','5','♭7'],blues:['1','♭3','4','♭5','5','♭7']};
+  const parentScale=scale=>E.scales[scale].length===7?scale:scale==='majorPent'?'major':'minor';
+  function chord(scale,key,degree){return E.harmony({...E.defaults,scale,key,voicing:'seventh'},degree);}
+  function degree(scale,interval){return degrees[scale][E.scales[scale].indexOf(E.mod(interval))]||['1','♭2','2','♭3','3','4','♭5','5','♭6','6','♭7','7'][E.mod(interval)];}
+  const api={scales,styles,materials,degrees,parentScale,chord,degree};
+  root.PracticeCatalog=api;if(typeof module!=='undefined')module.exports=api;
+})(globalThis);
+
+</script>
+<script>
 (function(){
 'use strict';
 const E=globalThis.GrooveEngine,B=globalThis.GuitarSampleBank,$=id=>document.getElementById(id),R=['I','II','III','IV','V','VI','VII'];
 const state={config:{...E.defaults,materials:[...E.defaults.materials],bars:[...E.defaults.bars]},result:null,audio:null,buffers:new Map(),sources:[],playing:false,loop:true,start:0,frame:0,timer:0,selected:null,token:0,buses:null,master:null,analyser:null,peak:0,dailyPlan:null};
-const scaleNames={major:'Major / Ionian',minor:'Natural Minor',dorian:'Dorian',mixolydian:'Mixolydian',phrygian:'Phrygian',lydian:'Lydian',locrian:'Locrian',majorPent:'Major Pentatonic',minorPent:'Minor Pentatonic',blues:'Blues'};
-const materialNames={whole:'全音符',half:'二分音符',quarter:'四分音符',eighth:'八分音符',sixteenth:'十六分音符','dotted-half':'附点二分','dotted-quarter':'附点四分','dotted-eighth':'附点八分','half-triplet':'二分三连音','quarter-triplet':'四分三连音','eighth-triplet':'八分三连音','sixteenth-triplet':'十六分三连音',tie:'跨拍延音',shuffle:'Shuffle',sync:'十六分切分','332':'3-3-2 分组',rest:'休止'};
+const scaleNames=globalThis.PracticeCatalog.scales;
+const materialNames=globalThis.PracticeCatalog.materials;
 const modeNames={modal:'Modal Vamp',riff:'Riff Guitar'};
 function options(map,current){return Object.entries(map).map(([v,n])=>`<option value="${v}" ${v===current?'selected':''}>${n}</option>`).join('')}
 function field(label,id,content){return `<div class="field"><label for="${id}">${label}</label>${content}</div>`}
@@ -290,7 +659,7 @@ function select(label,id,map,value){return field(label,id,`<select id="${id}">${
 const practice={count:1,alternate:false,a:0,b:null,cycle:0,focus:false,history:[],last:null,ladder:{active:false,start:70,target:120,step:5,repeats:2,round:0}};
 const clone=x=>JSON.parse(JSON.stringify(x));
 function setup(restored=null){
- const c=state.config;if(!modeNames[c.mode])c.mode='modal';$('rhythmPanel').innerHTML=`<div class="groove-layout"><aside class="groove-settings"><div class="practice-tabs"><button data-practice="normal" class="active">普通模式</button><button data-practice="sequence">模进练习</button></div><section><h3>基础设置 / CORE</h3><div class="control-grid">${select('调性','ggKey',Object.fromEntries(E.names.map((n,i)=>[i,n])),String(c.key))}${select('调式','ggScale',scaleNames,c.scale)}${select('拍号','ggMeter',{'4/4':'4/4','3/4':'3/4','6/8':'6/8','5/4':'5/4'},c.meter)}${field('速度 BPM', 'ggTempo', '<input id="ggTempo" type="number" min="40" max="220" value="'+c.tempo+'">')}</div></section><section><h3>律动设定 / GROOVE</h3><div id="normalControls" class="control-grid">${select('生成方式','ggMode',modeNames,c.mode)}${select('风格','ggStyle',{funk:'Funk',rock:'Rock',motown:'Motown',rnb:'R&B / Neo Soul',reggae:'Reggae',jazz:'Jazz Swing',bossa:'Bossa Nova'},c.style)}${select('难度','ggDifficulty',{easy:'初级',medium:'中级',hard:'高级'},c.difficulty)}${select('密度','ggDensity',{sparse:'稀疏',medium:'中等',dense:'密集'},c.density)}${select('演奏感觉','ggFeel',{style:'跟随风格',tight:'紧凑 / 准确',pocket:'常规 Pocket',loose:'松弛 / 有呼吸',swing:'Swing'},c.feel)}${select('动态层次','ggDynamics',{natural:'自然',strong:'明显'},c.dynamics)}</div><div id="sequenceControls" hidden class="control-grid">${select('模进逻辑','ggSequenceLogic',{scale:'调式内模进',harmony:'随和声模进'},c.sequenceLogic)}${select('动机','ggPattern',{'1353':'1 - 3 - 5 - 3','1351':'1 - 3 - 5 - 1↑','123':'1 - 2 - 3','1234':'1 - 2 - 3 - 4','135':'1 - 3 - 5','1357':'1 - 3 - 5 - 7','321':'3 - 2 - 1','4321':'4 - 3 - 2 - 1'},c.pattern)}${select('方向','ggDirection',{up:'向上推进',down:'向下推进'},c.direction)}${select('变化','ggVariation',{fixed:'固定节奏型',vary:'逐小节变化'},c.variation)}</div><label class="slider-label">切分比例 <output id="ggSyncOut">${c.sync}%</output><input id="ggSync" type="range" min="0" max="100" value="${c.sync}"></label><div class="segmented" id="ggLink">${['loose','balanced','tight','inverse'].map((v,i)=>`<button data-value="${v}" class="${v===c.link?'active':''}">${['松散','平衡','紧密','反向'][i]}</button>`).join('')}</div></section><section><h3>乐器与把位</h3><div class="control-grid">${select('调弦','ggTuning',{standard:'标准 E A D G B E',dropD:'Drop D'},c.tuning)}${select('把位偏好','ggPosition',{low:'低把位',lowmid:'低中把位',center:'居中把位',high:'高把位'},c.position)}${field('起始品','ggMin','<input id="ggMin" type="number" min="0" max="12" value="'+c.min+'">')}${field('结束品','ggMax','<input id="ggMax" type="number" min="0" max="12" value="'+c.max+'">')}</div></section><section><h3>和声进行 / HARMONY</h3><div class="control-grid">${select('和弦层级','ggVoicing',{triad:'三和弦',seventh:'七和弦',extension:'9 / 11 / 13 音',sus:'挂留和弦',inversion:'转位和弦',mixed:'混合'},c.voicing)}${select('扩展音','ggExtension',{0:'无',9:'9 音',11:'11 音',13:'13 音'},String(c.extension))}${select('常用进行','ggPreset',{'0,3,4,0':'I - IV - V - I','0,4,5,3':'I - V - VI - IV','0,5,3,4':'I - VI - IV - V','1,4,0,0':'II - V - I - I','0,3,0,4':'Funk / Reggae Vamp','0,0,0,0,3,3,0,0,4,3,0,4':'12 Bar Blues'},c.bars.join(','))}</div><div id="ggHarmony" class="harmony-edit"></div><button class="btn" id="ggAddBar">＋ 添加小节</button></section><section><h3>包含节奏型 / RHYTHM MATERIALS</h3><div id="ggMaterials" class="rhythm-chipset">${Object.entries(materialNames).map(([v,n])=>`<button data-value="${v}" class="rhythm-chip ${c.materials.includes(v)?'active':''}">${n}</button>`).join('')}</div></section><button class="btn primary generate-wide" id="ggGenerate">↻ 随机生成律动</button></aside><main class="groove-workspace"><div class="transport"><button class="btn primary" id="ggPlay">▶ 播放</button><button class="btn" id="ggPause">Ⅱ 暂停</button><button class="btn" id="ggRestart">↺ 开头</button><button class="btn active" id="ggLoop">⟳ 循环：开</button><span id="ggTempoDisplay">${c.tempo} BPM</span><button class="btn active" id="ggGuitarToggle">● 吉他</button><button class="btn active" id="ggDrumToggle">● 鼓组</button><button class="btn active" id="ggClickToggle" aria-pressed="true">节拍器：开</button><span id="ggSoundStatus">音色待加载</span></div><div class="mixer"><div>${select('吉他音色','ggGuitarSound',{steel:'原声钢弦',nylon:'尼龙弦',clean:'清音电吉他',muted:'闷音电吉他'},c.guitar)}<label>音量 <input id="ggGuitarVolume" type="range" min="0" max="140" value="115"></label></div><div>${select('鼓组','ggKit',{acoustic:'原声套鼓',tight:'紧凑套鼓',power:'强力套鼓'},c.kit)}<label>音量 <input id="ggDrumVolume" type="range" min="0" max="140" value="105"></label></div><div>${select('节拍器','ggClickSound',{classic:'经典 Click',wood:'木质 Click',cowbell:'Cowbell',electronic:'电子 Click'},c.click)}<label>音量 <input id="ggClickVolume" type="range" min="0" max="120" value="80"></label></div></div><section class="result-card"><header><div><h2>生成结果</h2><span id="ggMeta"></span></div><div><button class="btn" id="ggRegGuitar">重生成吉他</button><button class="btn" id="ggRegDrums">重生成鼓组</button><button class="btn" id="ggSave">保存</button><button class="btn" id="ggExport">导出 JSON</button></div></header><div id="ggWarnings"></div><div id="ggDailyPlanCard" class="daily-plan-card" hidden></div><div id="ggBars" class="result-bars"></div><div id="ggDrums" class="drum-view"></div></section><section class="result-card"><header><h2>推荐指板路径</h2><span id="ggRange"></span></header><div id="ggFretboard" class="mini-fretboard"></div><div class="fret-legend"><span class="root">根音</span><span class="chord">和弦音</span><span class="scale">调式音</span><span class="passing">经过 / 趋近音</span></div></section><section class="result-card note-explain"><header><div><h2>音符说明</h2><span id="ggCounter">请选择结果中的音符</span></div></header><div id="ggNoteInfo">点击音符查看它的弦、品位、力度与和声功能。</div><p id="ggAdvice"></p></section></main></div>`;
+ const c=state.config;if(!modeNames[c.mode])c.mode='modal';$('rhythmPanel').innerHTML=`<div class="groove-layout"><aside class="groove-settings"><div class="practice-tabs"><button data-practice="normal" class="active">普通模式</button><button data-practice="sequence">模进练习</button></div><section><h3>基础设置 / CORE</h3><div class="control-grid">${select('调性','ggKey',Object.fromEntries(E.names.map((n,i)=>[i,n])),String(c.key))}${select('调式','ggScale',scaleNames,c.scale)}${select('拍号','ggMeter',{'4/4':'4/4','3/4':'3/4','6/8':'6/8','5/4':'5/4'},c.meter)}${field('速度 BPM', 'ggTempo', '<input id="ggTempo" type="number" min="40" max="220" value="'+c.tempo+'">')}</div></section><section><h3>律动设定 / GROOVE</h3><div id="normalControls" class="control-grid">${select('生成方式','ggMode',modeNames,c.mode)}${select('风格','ggStyle',globalThis.PracticeCatalog.styles,c.style)}${select('难度','ggDifficulty',{easy:'初级',medium:'中级',hard:'高级'},c.difficulty)}${select('密度','ggDensity',{sparse:'稀疏',medium:'中等',dense:'密集'},c.density)}${select('演奏感觉','ggFeel',{style:'跟随风格',tight:'紧凑 / 准确',pocket:'常规 Pocket',loose:'松弛 / 有呼吸',swing:'Swing'},c.feel)}${select('动态层次','ggDynamics',{natural:'自然',strong:'明显'},c.dynamics)}</div><div id="sequenceControls" hidden class="control-grid">${select('模进逻辑','ggSequenceLogic',{scale:'调式内模进',harmony:'随和声模进'},c.sequenceLogic)}${select('动机','ggPattern',{'1353':'1 - 3 - 5 - 3','1351':'1 - 3 - 5 - 1↑','123':'1 - 2 - 3','1234':'1 - 2 - 3 - 4','135':'1 - 3 - 5','1357':'1 - 3 - 5 - 7','321':'3 - 2 - 1','4321':'4 - 3 - 2 - 1'},c.pattern)}${select('方向','ggDirection',{up:'向上推进',down:'向下推进'},c.direction)}${select('变化','ggVariation',{fixed:'固定节奏型',vary:'逐小节变化'},c.variation)}</div><label class="slider-label">切分比例 <output id="ggSyncOut">${c.sync}%</output><input id="ggSync" type="range" min="0" max="100" value="${c.sync}"></label><div class="segmented" id="ggLink">${['loose','balanced','tight','inverse'].map((v,i)=>`<button data-value="${v}" class="${v===c.link?'active':''}">${['松散','平衡','紧密','反向'][i]}</button>`).join('')}</div></section><section><h3>乐器与把位</h3><div class="control-grid">${select('调弦','ggTuning',{standard:'标准 E A D G B E',dropD:'Drop D'},c.tuning)}${select('把位偏好','ggPosition',{low:'低把位',lowmid:'低中把位',center:'居中把位',high:'高把位'},c.position)}${field('起始品','ggMin','<input id="ggMin" type="number" min="0" max="12" value="'+c.min+'">')}${field('结束品','ggMax','<input id="ggMax" type="number" min="0" max="12" value="'+c.max+'">')}</div></section><section><h3>和声进行 / HARMONY</h3><div class="control-grid">${select('和弦层级','ggVoicing',{triad:'三和弦',seventh:'七和弦',extension:'9 / 11 / 13 音',sus:'挂留和弦',inversion:'转位和弦',mixed:'混合'},c.voicing)}${select('扩展音','ggExtension',{0:'无',9:'9 音',11:'11 音',13:'13 音'},String(c.extension))}${select('常用进行','ggPreset',{'0,3,4,0':'I - IV - V - I','0,4,5,3':'I - V - VI - IV','0,5,3,4':'I - VI - IV - V','1,4,0,0':'II - V - I - I','0,3,0,4':'Funk / Reggae Vamp','0,0,0,0,3,3,0,0,4,3,0,4':'12 Bar Blues'},c.bars.join(','))}</div><div id="ggHarmony" class="harmony-edit"></div><button class="btn" id="ggAddBar">＋ 添加小节</button></section><section><h3>包含节奏型 / RHYTHM MATERIALS</h3><div id="ggMaterials" class="rhythm-chipset">${Object.entries(materialNames).map(([v,n])=>`<button data-value="${v}" class="rhythm-chip ${c.materials.includes(v)?'active':''}">${n}</button>`).join('')}</div></section><button class="btn primary generate-wide" id="ggGenerate">↻ 随机生成律动</button></aside><main class="groove-workspace"><div class="transport"><button class="btn primary" id="ggPlay">▶ 播放</button><button class="btn" id="ggPause">Ⅱ 暂停</button><button class="btn" id="ggRestart">↺ 开头</button><button class="btn active" id="ggLoop">⟳ 循环：开</button><span id="ggTempoDisplay">${c.tempo} BPM</span><button class="btn active" id="ggGuitarToggle">● 吉他</button><button class="btn active" id="ggDrumToggle">● 鼓组</button><button class="btn active" id="ggClickToggle" aria-pressed="true">节拍器：开</button><span id="ggSoundStatus">音色待加载</span></div><div class="mixer"><div>${select('吉他音色','ggGuitarSound',{steel:'原声钢弦',nylon:'尼龙弦',clean:'清音电吉他',muted:'闷音电吉他'},c.guitar)}<label>音量 <input id="ggGuitarVolume" type="range" min="0" max="140" value="115"></label></div><div>${select('鼓组','ggKit',{acoustic:'原声套鼓',tight:'紧凑套鼓',power:'强力套鼓'},c.kit)}<label>音量 <input id="ggDrumVolume" type="range" min="0" max="140" value="105"></label></div><div>${select('节拍器','ggClickSound',{classic:'经典 Click',wood:'木质 Click',cowbell:'Cowbell',electronic:'电子 Click'},c.click)}<label>音量 <input id="ggClickVolume" type="range" min="0" max="120" value="80"></label></div></div><section class="result-card"><header><div><h2>生成结果</h2><span id="ggMeta"></span></div><div><button class="btn" id="ggRegGuitar">重生成吉他</button><button class="btn" id="ggRegDrums">重生成鼓组</button><button class="btn" id="ggSave">保存</button><button class="btn" id="ggExport">导出 JSON</button></div></header><div id="ggWarnings"></div><div id="ggDailyPlanCard" class="daily-plan-card" hidden></div><div id="ggBars" class="result-bars"></div><div id="ggDrums" class="drum-view"></div></section><section class="result-card"><header><h2>推荐指板路径</h2><span id="ggRange"></span></header><div id="ggFretboard" class="mini-fretboard"></div><div class="fret-legend"><span class="root">根音</span><span class="chord">和弦音</span><span class="scale">调式音</span><span class="passing">经过 / 趋近音</span></div></section><section class="result-card note-explain"><header><div><h2>音符说明</h2><span id="ggCounter">请选择结果中的音符</span></div></header><div id="ggNoteInfo">点击音符查看它的弦、品位、力度与和声功能。</div><p id="ggAdvice"></p></section></main></div>`;
  $('ggExport').insertAdjacentHTML('afterend','<button class="btn" id="ggRestore">恢复</button>');
  $('ggSoundStatus').insertAdjacentHTML('beforebegin','<button class="btn" id="ggTest">♪ 试听吉他</button><button class="btn" id="ggReload">↻ 重载音色</button><label class="output-meter">输出 <meter id="ggMeterLevel" min="0" max="1" value="0"></meter></label>');
  document.querySelector('.practice-tabs').insertAdjacentHTML('beforebegin','<button class="btn" id="ggCollapse" aria-expanded="true">⌃ 收起设置</button>');
@@ -323,7 +692,7 @@ function installPractice(){
  for(const id of ['ggA','ggB'])$(id).onchange=()=>{stop();practice.a=+$('ggA').value;practice.b=+$('ggB').value;if(practice.a>practice.b){if(id==='ggA')practice.b=practice.a;else practice.a=practice.b}state.loop=true;render()};
  $('ggAllBars').onclick=()=>{stop();practice.a=0;practice.b=null;render()};
  $('ggUndo').onclick=()=>{const item=practice.history.pop();if(item)loadPractice(item)};
- $('ggFavorite').onclick=()=>{if(!state.result)return;try{const items=favorites();items.unshift({id:Date.now(),name:new Date().toLocaleString()+' · '+state.config.tempo+' BPM',data:snapshot()});localStorage.setItem('guitarGrooveFavorites',JSON.stringify(items));refreshFavorites();$('ggPhase').textContent='已收藏当前练习'}catch(e){$('ggPhase').textContent='收藏失败，请导出 JSON 备份'}};
+ $('ggFavorite').onclick=()=>{if(!state.result)return;try{const items=favorites();items.unshift({id:Date.now(),name:new Date().toLocaleString()+' · '+state.config.tempo+' BPM',data:snapshot()});localStorage.setItem('guitarGrooveGreenFavorites',JSON.stringify(items));refreshFavorites();$('ggPhase').textContent='已收藏当前练习'}catch(e){$('ggPhase').textContent='收藏失败，请导出 JSON 备份'}};
  $('ggLoadFavorite').onclick=()=>{try{const item=favorites().find(x=>String(x.id)===$('ggFavorites').value);if(item){practice.history.push(snapshot());loadPractice(item.data)}}catch(e){$('ggPhase').textContent='无法载入收藏'}};refreshFavorites();
 }
 let scoreZoom=1.25,focusScroll=0;
@@ -342,7 +711,7 @@ function applyFocus(){
  if(entering)window.scrollTo(0,0);else if(!practice.focus)window.scrollTo(0,focusScroll);
 }
 function updateScoreZoom(){document.querySelector('.groove-layout').style.setProperty('--score-zoom',scoreZoom);$('ggZoomValue').textContent=Math.round(scoreZoom*100)+'%';$('ggZoomOut').disabled=scoreZoom<=1;$('ggZoomIn').disabled=scoreZoom>=2}
-function favorites(){return JSON.parse(localStorage.getItem('guitarGrooveFavorites')||'[]')}
+function favorites(){return JSON.parse(localStorage.getItem('guitarGrooveGreenFavorites')||'[]')}
 function refreshFavorites(){try{const select=$('ggFavorites');select.replaceChildren(new Option('选择收藏',''));favorites().forEach(x=>select.add(new Option(x.name,String(x.id))))}catch(e){$('ggPhase').textContent='收藏存储不可用'}}
 function snapshot(){return clone({config:state.config,result:state.result,practice:{count:practice.count,alternate:practice.alternate,a:practice.a,b:practice.b},mix:['Guitar','Drum','Click'].map(n=>({volume:$('gg'+n+'Volume').value,on:$('gg'+n+'Toggle').classList.contains('active')})),loop:state.loop,view:$('ggView').value,notation:$('ggNotation').value})}
 function loadPractice(item){stop();state.config=clone(item.config);Object.assign(practice,item.practice||{});state.loop=item.loop??true;setup(clone(item.result));['Guitar','Drum','Click'].forEach((n,i)=>{if(!item.mix?.[i])return;$('gg'+n+'Volume').value=item.mix[i].volume;$('gg'+n+'Toggle').classList.toggle('active',item.mix[i].on);$('gg'+n+'Toggle').setAttribute('aria-pressed',String(item.mix[i].on))});$('ggView').value=item.view||'tab';$('ggNotation').value=item.notation||'fixed';$('ggSequenceOn').checked=state.config.practice==='sequence';applySequenceUI(false);updateMix();render();practice.last=snapshot()}
@@ -481,8 +850,8 @@ function sampleMeter(){if(!state.analyser)return;const data=new Float32Array(sta
 function highlight(){if(!state.playing)return;sampleMeter();const c=state.config,barSec=E.time(c,E.ticks(c)),elapsed=state.audio.currentTime-state.start,{a,b:end}=range(),length=end-a+1,b=a+Math.floor(Math.max(0,elapsed)/barSec)%length,local=Math.max(0,elapsed)%barSec;$('ggPhase').textContent=elapsed<0?'预备 · '+Math.ceil(-elapsed/(60/c.tempo)):practice.alternate?(Math.floor(elapsed/(barSec*length))%2?'自己弹 · 吉他静音':'先听 · 吉他示范'):'练习中 · 第 '+(b+1)+' 小节 · '+state.result.bars[b].harmony.name+' → '+state.result.bars[(b+1)%length].harmony.name;if(elapsed<0){state.frame=requestAnimationFrame(highlight);return}document.querySelectorAll('.result-bar.playing').forEach(x=>x.classList.remove('playing'));document.querySelectorAll('.result-bar')[b]?.classList.add('playing');document.querySelectorAll('.event.sounding').forEach(x=>x.classList.remove('sounding'));state.result.bars[b].events.forEach((e,i)=>{if(local>=E.time(c,e.start)&&local<E.time(c,e.start+e.duration))document.querySelectorAll('[data-event^="'+b+','+i+',"]').forEach(x=>x.classList.add('sounding'))});state.frame=requestAnimationFrame(highlight)}
 function clearScheduled(){state.sources.slice().forEach(s=>{try{s.stop()}catch(e){}});state.sources=[];clearTimeout(state.timer);cancelAnimationFrame(state.frame)}
 function stop(){state.token++;state.pending=false;clearScheduled();state.playing=false;if($('ggPhase'))$('ggPhase').textContent='已停止';if($('ggPlay'))$('ggPlay').textContent='▶ 播放';if($('ggMeterLevel'))$('ggMeterLevel').value=0;document.querySelectorAll('.result-bar.playing,.event.sounding').forEach(x=>x.classList.remove('playing','sounding'))}
-function save(){try{localStorage.setItem('guitarGrooveProject',JSON.stringify(snapshot()));$('ggSoundStatus').textContent='练习预设已保存到此浏览器'}catch(e){$('ggSoundStatus').textContent='浏览器未允许本地保存，请使用导出 JSON'}}
-function restore(){try{const item=JSON.parse(localStorage.getItem('guitarGrooveProject'));if(!item?.config||!item.result?.bars?.length)throw Error('没有可恢复的预设');if(state.result)practice.history.push(snapshot());loadPractice(item);$('ggPhase').textContent='已恢复练习与音量'}catch(e){$('ggPhase').textContent=e.message}}
+function save(){try{localStorage.setItem('guitarGrooveGreenProject',JSON.stringify(snapshot()));$('ggSoundStatus').textContent='练习预设已保存到此浏览器'}catch(e){$('ggSoundStatus').textContent='浏览器未允许本地保存，请使用导出 JSON'}}
+function restore(){try{const item=JSON.parse(localStorage.getItem('guitarGrooveGreenProject'));if(!item?.config||!item.result?.bars?.length)throw Error('没有可恢复的预设');if(state.result)practice.history.push(snapshot());loadPractice(item);$('ggPhase').textContent='已恢复练习与音量'}catch(e){$('ggPhase').textContent=e.message}}
 function exportJSON(){const data=JSON.stringify({version:1,config:state.config,harmony:state.result.bars.map(b=>b.harmony),guitar:state.result.bars.flatMap(b=>b.events),drums:state.result.drums},null,2),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download='guitar-groove.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 globalThis.GuitarGroove={init:setup,stop,regenerate,togglePlay,get state(){return state}};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});window.addEventListener('pagehide',stop);
@@ -490,21 +859,47 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});wi
 
 </script>
 <script>
-const chrom=['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'], fixedDegreeLabels=['1','♯1','2','♭3','3','4','♯4','5','♭6','6','♭7','7'], tuning=[4,11,7,2,9,4], seventhOffsets=[0,2,4,6];
-const modes={major:{name:'Ionian',interval:[0,2,4,5,7,9,11],triads:['maj7','m7','m7','maj7','7','m7','ø7']},dorian:{name:'Dorian',interval:[0,2,3,5,7,9,10],triads:['m7','m7','maj7','7','m7','ø7','maj7']},mixolydian:{name:'Mixolydian',interval:[0,2,4,5,7,9,10],triads:['7','m7','ø7','maj7','m7','m7','maj7']},minor:{name:'Aeolian',interval:[0,2,3,5,7,8,10],triads:['m7','ø7','maj7','m7','m7','maj7','7']}};
+const chrom=['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'], fixedDegreeLabels=['1','♯1','2','♭3','3','4','♯4','5','♭6','6','♭7','7'], tuning=[4,11,7,2,9,4];
+const modes=Object.fromEntries(Object.entries(GrooveEngine.scales).map(([id,interval])=>[id,{name:PracticeCatalog.scales[id],interval}]));
 let state={root:0,mode:'major',display:'scale',notation:'movable',start:0,end:12,only:true,chord:-1};
-const $=id=>document.getElementById(id);function noteName(n){return chrom[(n+12)%12]}function chordPitchesFor(scale,degree){return seventhOffsets.map(offset=>scale[(degree+offset)%7])}
-function degreeLabel(interval,index){const base=['1','2','3','4','5','6','7'][index];const major=[0,2,4,5,7,9,11][index],diff=interval-major;return diff===-1?'♭'+base:diff===1?'♯'+base:base}
+const $=id=>document.getElementById(id);function noteName(n){return chrom[(n+12)%12]}
+function degreeLabel(interval,index){return PracticeCatalog.degree(state.mode,interval);}
 const thirdNames={2:'减三',3:'小三',4:'大三',5:'增三'};function chordIntervalPattern(pitches){return pitches.slice(0,-1).map((pitch,i)=>{const semitones=(pitches[i+1]-pitch+12)%12;return thirdNames[semitones]||`${semitones} 半音`}).join(' - ')}
 function chordDegreeLabel(pitch,root){const semitones=(pitch-root+12)%12;return ({0:'1',3:'♭3',4:'3',6:'♭5',7:'5',8:'♭6',9:'6',10:'♭7',11:'7'})[semitones]||String(semitones)}function notationLabel(pitch,modeIntervals,degree,chordRoot,inChord){if(state.notation==='fixed')return fixedDegreeLabels[(pitch+12)%12];if(state.chord>=0&&chordRoot!==undefined&&inChord)return chordDegreeLabel(pitch,chordRoot);return degreeLabel(modeIntervals[degree],degree)}
-function render(){const m=modes[state.mode], scale=m.interval.map(x=>(state.root+x)%12),rootPitch=state.chord>=0?scale[state.chord]:state.root; $('display').value=state.display;$('notation').value=state.notation;$('start').value=state.start;$('end').value=state.end;$('switch').classList.toggle('on',state.only);$('boardTitle').textContent=`${noteName(state.root)} ${m.name} · ${state.start} — ${state.end} 品`;$('rootLegend').textContent=state.chord>=0?'和弦根音':'调式根音';$('rangeText').textContent=`${state.start} — ${state.end} 品`;$('startVal').textContent=state.start;$('endVal').textContent=state.end;
- $('frets').innerHTML=Array.from({length:12},(_,i)=>`<div class="fret"><span>${i+1}</span></div>`).join('');$('strings').innerHTML=Array.from({length:6},(_,i)=>`<div class="string" style="--thick:${1+i*.35}px"></div>`).join('');
- const chordPitches=state.chord>=0?chordPitchesFor(scale,state.chord):[];let html='',openHtml='';for(let s=0;s<6;s++){for(let f=1;f<=12;f++){const p=(tuning[s]+f)%12,degree=scale.indexOf(p),inScale=degree>=0,inChord=chordPitches.includes(p),visible=!state.only||(f>=state.start&&f<=state.end);if(inScale&&visible){const label=notationLabel(p,m.interval,degree,rootPitch,inChord);let cls='note scale';if(state.chord>=0&&inChord)cls=`note chord${p===rootPitch?' root':''}`;else if(p===rootPitch)cls='note root';html+=`<div class="${cls}" style="grid-column:${f};grid-row:${s+1}" title="${noteName(p)} · 简谱 ${label}">${noteName(p)}<small>${label}</small></div>`;}}
-  const f=0,p=(tuning[s]+f)%12,degree=scale.indexOf(p),inScale=degree>=0,inChord=chordPitches.includes(p);{const label=inScale?notationLabel(p,m.interval,degree,rootPitch,inChord):'—';let cls=inScale?'note scale':'note open-muted';if(state.chord>=0&&inChord)cls=`note chord${p===rootPitch?' root':''}`;else if(inScale&&p===rootPitch)cls='note root';openHtml+=`<div class="${cls}" style="grid-row:${s+1}" title="${noteName(p)} · 空弦${inScale?' · 简谱 '+label:' · 非调内'}">${noteName(p)}<small>${label}</small></div>`;}}$('notes').innerHTML=html;$('openNotes').innerHTML=openHtml;
- $('chords').innerHTML=scale.map((p,i)=>{const type=m.triads[i], roman=['I','II','III','IV','V','VI','VII'][i]+(type==='ø7'?'ø':'');const active=i===state.chord,chordPitches=chordPitchesFor(scale,i),intervals=chordIntervalPattern(chordPitches),intervalParts=intervals.split(' - ');const toneNames=seventhOffsets.map((offset)=>{const idx=(i+offset)%7;return `<span class="${offset===0?'root-tone':''}">${noteName(scale[idx])}</span>`}).join('');const toneDegrees=seventhOffsets.map((offset)=>{const idx=(i+offset)%7,label=state.notation==='fixed'?fixedDegreeLabels[scale[idx]]:chordDegreeLabel(scale[idx],p);return `<span class="${offset===0?'root-tone':''}">${label}</span>`}).join('');const isTonic=i===0;return `<div class="chord ${active?'selected':''}" data-i="${i}"><div class="chord-head"><div class="chord-heading"><span class="roman">${roman}</span><span class="name">${noteName(p)}${type}</span></div><span class="badge">${isTonic?'主和弦':'七和弦'}</span></div><div class="chord-note-row" aria-label="和弦音名">${toneNames}</div><div class="chord-degree-row" aria-label="简谱音级">${toneDegrees}</div><div class="chord-interval-row" aria-label="三度堆叠：${intervals}">${intervalParts.map(part=>`<span>${part}</span>`).join('')}</div></div>`}).join('');document.querySelectorAll('.chords .chord').forEach(c=>c.onclick=()=>{state.chord=+c.dataset.i;state.display='chord';render()});if($('motifModal').classList.contains('open'))renderMotif();}
+function currentHarmony(degree=state.chord){return PracticeCatalog.chord(state.mode,state.root,Math.max(0,degree));}
+function render(){
+ const m=modes[state.mode],scale=m.interval.map(x=>(state.root+x)%12),h=state.chord>=0?currentHarmony():null,rootPitch=h?h.root:state.root,chordPitches=h?h.pcs:[];
+ $('display').value=state.display;$('notation').value=state.notation;$('start').value=state.start;$('end').value=state.end;$('switch').classList.toggle('on',state.only);
+ $('boardTitle').textContent=noteName(state.root)+' '+m.name+' · '+state.start+' — '+state.end+' 品';
+ $('rootLegend').textContent=h?'和弦根音':'调式根音';$('rangeText').textContent=state.start+' — '+state.end+' 品';$('startVal').textContent=state.start;$('endVal').textContent=state.end;
+ const parent=PracticeCatalog.parentScale(state.mode);
+ $('chordCount').textContent=parent===state.mode?'7 chords':'母调七和弦 · '+PracticeCatalog.scales[parent];
+ $('chordCount').title=parent===state.mode?'调式内三度堆叠':'与律动生成器一致：五声 / Blues 使用对应母调七和弦，部分和弦音不在所选音阶内';
+ $('frets').innerHTML=Array.from({length:12},(_,i)=>'<div class="fret"><span>'+(i+1)+'</span></div>').join('');
+ $('strings').innerHTML=Array.from({length:6},(_,i)=>'<div class="string" style="--thick:'+(1+i*.35)+'px"></div>').join('');
+ let html='',openHtml='';
+ for(let s=0;s<6;s++)for(let f=0;f<=12;f++){
+  const p=(tuning[s]+f)%12,degree=scale.indexOf(p),inScale=degree>=0,inChord=chordPitches.includes(p),visible=!state.only||f>=state.start&&f<=state.end;
+  if(f>0&&(!visible||!(inChord||inScale)))continue;
+  const label=inChord||inScale?notationLabel(p,m.interval,degree,rootPitch,inChord):'—';
+  let cls=inScale?'note scale':'note open-muted';
+  if(h&&inChord)cls='note chord'+(p===rootPitch?' root':'');else if(!h&&p===rootPitch)cls='note root';
+  const marker='<div class="'+cls+'" style="'+(f?'grid-column:'+f+';':'')+'grid-row:'+(s+1)+'" title="'+noteName(p)+(f?' · 简谱 '+label:' · 空弦 · '+label)+'">'+noteName(p)+'<small>'+label+'</small></div>';
+  if(f)html+=marker;else openHtml+=marker;
+ }
+ $('notes').innerHTML=html;$('openNotes').innerHTML=openHtml;
+ $('chords').innerHTML=Array.from({length:7},(_,i)=>{
+  const chord=currentHarmony(i),tones=chord.pcs,parts=chordIntervalPattern(tones).split(' - ');
+  return '<div class="chord '+(i===state.chord?'selected':'')+'" data-i="'+i+'"><div class="chord-head"><div class="chord-heading"><span class="roman">'+['I','II','III','IV','V','VI','VII'][i]+'</span><span class="name">'+chord.name+'</span></div><span class="badge">'+(i===0?'主和弦':'七和弦')+'</span></div><div class="chord-note-row" aria-label="和弦音名">'+tones.map((p,n)=>'<span class="'+(!n?'root-tone':'')+'">'+noteName(p)+'</span>').join('')+'</div><div class="chord-degree-row" aria-label="简谱音级">'+tones.map((p,n)=>'<span class="'+(!n?'root-tone':'')+'">'+(state.notation==='fixed'?fixedDegreeLabels[p]:chordDegreeLabel(p,chord.root))+'</span>').join('')+'</div><div class="chord-interval-row">'+parts.map(p=>'<span>'+p+'</span>').join('')+'</div></div>';
+ }).join('');
+ document.querySelectorAll('.chords .chord').forEach(c=>c.onclick=()=>{state.chord=+c.dataset.i;state.display='chord';render();});
+ if($('motifModal').classList.contains('open'))renderMotif();
+}
+$('mode').innerHTML=Object.entries(PracticeCatalog.scales).map(([id,name])=>'<option value="'+id+'">'+name+'</option>').join('');
+$('mode').value='major';
 ['root','mode','display','notation'].forEach(id=>$(id).onchange=e=>{state[id]=id==='root'?chrom.indexOf(e.target.value):e.target.value;if(id==='display'){if(state.display==='scale')state.chord=-1;else if(state.chord<0)state.chord=0}else if(id!=='notation'){state.chord=-1;if(state.display==='chord')state.chord=0}render()});['start','end'].forEach(id=>$(id).oninput=e=>{state[id]=+e.target.value;if(state.start>state.end){if(id==='start')state.end=state.start;else state.start=state.end}render()});$('switch').onclick=()=>{state.only=!state.only;$('switch').classList.toggle('on',state.only);render()};$('reset').onclick=()=>{state={root:0,mode:'major',display:'scale',notation:'movable',start:0,end:12,only:true,chord:-1};$('root').value='C';$('mode').value='major';$('display').value='scale';$('notation').value='movable';$('start').value=0;$('end').value=12;$('switch').classList.add('on');render()};
 const motifPatterns=[{steps:[0,1,2,3,2,1,3,0],hint:'上行经过三度后回落，注意每拍的落点。'},{steps:[0,2,1,3,2,0,1,0],hint:'跳进与级进交替，保持八拍的律动均匀。'},{steps:[3,2,1,0,1,2,3,2],hint:'从七音开始倒行，最后回到五音形成悬念。'},{steps:[0,1,0,2,1,3,2,0],hint:'把第一拍的短句移位重复，感受动机发展。'},{steps:[0,3,2,1,3,1,2,0],hint:'根音与七音形成大跳，唱准后再加快速度。'}];let motifIndex=-1,lastMotifPitches=[];
-function motifInfo(){const m=modes[state.mode],scale=m.interval.map(x=>(state.root+x)%12),degree=state.chord>=0?state.chord:0,pitches=chordPitchesFor(scale,degree),root=pitches[0];return {m,scale,degree,pitches,root,type:m.triads[degree],fallback:state.chord<0};}
+function motifInfo(){const m=modes[state.mode],scale=m.interval.map(x=>(state.root+x)%12),degree=state.chord>=0?state.chord:0,h=currentHarmony(degree);return {m,scale,degree,pitches:h.pcs,root:h.root,type:h.name.slice(GrooveEngine.names[h.root].length),fallback:state.chord<0};}
 function motifLabel(pitch,root){return state.notation==='fixed'?fixedDegreeLabels[(pitch+12)%12]:chordDegreeLabel(pitch,root)}
 let motifReturnFocus=null;function renderMotif(){const info=motifInfo(),wasOpen=$('motifModal').classList.contains('open');if(motifIndex<0)motifIndex=Math.floor(Math.random()*motifPatterns.length);const pattern=motifPatterns[motifIndex%motifPatterns.length];lastMotifPitches=pattern.steps.map(i=>info.pitches[i]);$('motifTitle').textContent=`${noteName(info.root)}${info.type} · 动机训练`;$('motifContext').textContent=info.fallback?`当前未选和弦，先用 ${noteName(info.root)}${info.type}（I 级）生成`:`仅使用 ${noteName(info.root)}${info.type} 的和弦内音`;$('motifTones').innerHTML=info.pitches.map((p,i)=>`<span class="motif-tone${i===0?' root-tone':''}"><b>${noteName(p)}</b><small>${motifLabel(p,info.root)}</small></span>`).join('');$('motifSequence').innerHTML=lastMotifPitches.map((p,i)=>`<span class="motif-step${p===info.root?' root-step':''}"><span class="beat">${i+1}</span><b>${motifLabel(p,info.root)}</b><small>${noteName(p)}</small></span>`).join('');$('motifHint').textContent=pattern.hint;$('motifModal').classList.add('open');$('motifModal').setAttribute('aria-hidden','false');if(!wasOpen)setTimeout(()=>$('motifClose').focus(),0);}
 function closeMotif(){if(typeof stopMotifAudio==='function')stopMotifAudio();$('motifModal').classList.remove('open');$('motifModal').setAttribute('aria-hidden','true');if(motifReturnFocus&&motifReturnFocus.focus)motifReturnFocus.focus();motifReturnFocus=null}
@@ -532,7 +927,7 @@ function playGuitarSequence(pitches,{spacing=.31,duration=1.65,velocity=.78}={})
   if(playing)stopArpeggio();
   try{audioCtx=new AudioCtor();audioBus=makeAudioBus(audioCtx)}catch(e){audioCtx=null;audioBus=null;return}
   playing=true;const generation=++playGeneration;$('play').textContent='■ 停止播放';
-  const m=modes[state.mode],scale=m.interval.map(x=>(state.root+x)%12),root=state.chord>=0?scale[state.chord]:state.root,intervals=pitches.map(p=>(p-root+12)%12);
+  const m=modes[state.mode],scale=m.interval.map(x=>(state.root+x)%12),root=state.chord>=0?currentHarmony().root:state.root,intervals=pitches.map(p=>(p-root+12)%12);
   const schedule=()=>{if(!audioCtx||generation!==playGeneration)return;const now=audioCtx.currentTime;
     pitches.forEach((p,i)=>{const semitones=intervals[i],midi=48+root+semitones,freq=440*Math.pow(2,(midi-69)/12);pluckGuitarString(audioCtx,audioBus.input,freq,now+i*spacing,velocity,duration);});
     playTimer.push(setTimeout(()=>{if(generation===playGeneration)stopArpeggio()},Math.ceil((pitches.length-1)*spacing*1000+duration*1000+380)));
@@ -540,14 +935,23 @@ function playGuitarSequence(pitches,{spacing=.31,duration=1.65,velocity=.78}={})
   const ctx=audioCtx;
   Promise.all([ctx.resume(),loadPracticeSamples(ctx)]).then(schedule).catch(()=>{if(generation===playGeneration){stopArpeggio();$('playMotif').textContent='音色载入失败，点击重试';}});
 }
-function playArpeggio(){if(playing){stopArpeggio();return}const m=modes[state.mode],scale=m.interval.map(x=>(state.root+x)%12),root=state.chord>=0?scale[state.chord]:state.root,tones=state.chord>=0?chordPitchesFor(scale,state.chord):scale;playGuitarSequence(tones,{spacing:.31,duration:1.65,velocity:.78});}
+function playArpeggio(){if(playing){stopArpeggio();return}const m=modes[state.mode],scale=m.interval.map(x=>(state.root+x)%12),root=state.chord>=0?currentHarmony().root:state.root,tones=state.chord>=0?currentHarmony().pcs:scale;playGuitarSequence(tones,{spacing:.31,duration:1.65,velocity:.78});}
 /* Motifs retain their timing and use the same unprocessed guitar recordings. */
 function playMotifSequence(pitches){$('playMotif').textContent='▶ 播放动机';if(playing)stopArpeggio();playGuitarSequence(pitches,{spacing:.3,duration:1.15,velocity:.7});}
 function stopMotifAudio(){if(playing)stopArpeggio();}
 $('play').onclick=playArpeggio;
-function showTool(tool){stopArpeggio();GuitarGroove.stop();const rhythm=tool==='rhythm',knowledge=tool==='knowledge',chordShapes=tool==='chordShapes';$('rhythmPanel').classList.toggle('active',rhythm);$('knowledgePanel').hidden=!knowledge;$('chordShapesPanel').hidden=!chordShapes;document.querySelector('.controls').style.display=rhythm||knowledge||chordShapes?'none':'';document.querySelector('.grid').style.display=rhythm||knowledge||chordShapes?'none':'';$('navChord').classList.toggle('active',!rhythm&&!knowledge&&!chordShapes);$('navRhythm').classList.toggle('active',rhythm);$('navKnowledge').classList.toggle('active',knowledge);$('navChordShapes').classList.toggle('active',chordShapes);$('pageTitle').textContent=chordShapes?'常用和弦指型':knowledge?'指板知识':rhythm?'吉他律动生成器':'和弦琶音练习工具';}
+function showTool(tool){
+ stopArpeggio();GuitarGroove.stop();globalThis.EarTraining?.stop();
+ if(document.body.classList.contains('score-focus'))$('ggFocus').click();
+ const rhythm=tool==='rhythm',knowledge=tool==='knowledge',chordShapes=tool==='chordShapes',ear=tool==='ear';
+ $('rhythmPanel').classList.toggle('active',rhythm);$('knowledgePanel').hidden=!knowledge;$('chordShapesPanel').hidden=!chordShapes;if($('earPanel'))$('earPanel').hidden=!ear;
+ document.querySelector('.controls').style.display=rhythm||knowledge||chordShapes||ear?'none':'';
+ document.querySelector('.grid').style.display=rhythm||knowledge||chordShapes||ear?'none':'';
+ for(const [id,active]of [['navChord',tool==='chord'],['navRhythm',rhythm],['navKnowledge',knowledge],['navChordShapes',chordShapes],['navEar',ear]])$(id)?.classList.toggle('active',active);
+ $('pageTitle').textContent=ear?'听感练习':chordShapes?'常用和弦指型':knowledge?'指板知识':rhythm?'吉他律动生成器':'和弦琶音练习工具';
+}
 $('navChord').onclick=()=>showTool('chord');$('navRhythm').onclick=()=>showTool('rhythm');
-document.addEventListener('keydown',e=>{if(e.code!=='Space'||e.repeat)return;const tag=document.activeElement?.tagName;if(['INPUT','SELECT','TEXTAREA','BUTTON'].includes(tag))return;if(document.querySelector('.modal-backdrop.open'))return;e.preventDefault();if(document.getElementById('rhythmPanel').classList.contains('active')){GuitarGroove.togglePlay()}else if(document.getElementById('knowledgePanel').hidden&&document.getElementById('chordShapesPanel').hidden){playArpeggio()}});
+document.addEventListener('keydown',e=>{if(e.code!=='Space'||e.repeat)return;const tag=document.activeElement?.tagName;if(['INPUT','SELECT','TEXTAREA','BUTTON'].includes(tag))return;if(document.querySelector('.modal-backdrop.open'))return;e.preventDefault();if(document.getElementById('earPanel')&&!document.getElementById('earPanel').hidden){EarTraining.togglePlay()}else if(document.getElementById('rhythmPanel').classList.contains('active')){GuitarGroove.togglePlay()}else if(document.getElementById('knowledgePanel').hidden&&document.getElementById('chordShapesPanel').hidden){playArpeggio()}});
 const sidebarToggle=()=>{const app=document.querySelector('.app'),collapsed=app.classList.toggle('sidebar-collapsed');document.querySelector('.platform-brand').setAttribute('aria-expanded',String(!collapsed));};document.querySelector('.platform-brand').onclick=e=>{if(e.target.closest('.tool-nav'))return;sidebarToggle()};
 GuitarGroove.init();
 render();
@@ -740,4 +1144,355 @@ function init(){
 globalThis.ChordShapes={init,qualities,specialCatalog,roles,chordDiagram,toRoot,cagedRows,fullFretboardRows};
 })();
 
-</script><script>ChordShapes.init();</script></body></html>
+</script><script>ChordShapes.init();</script><script>
+(function(root){
+  'use strict';
+  const E=root.GrooveEngine;
+  const groups={shuffle:[16,8],sync:[6,12,6],'332':[18,18,12]};
+  const defaults={key:'random',scale:'major',scalePool:['major','minor'],count:4,materials:['quarter','eighth'],tempo:80,meter:'4/4',style:'rock',difficulty:'easy',repeats:3,gap:1,countIn:1,visibility:'show',cue:false,kit:'acoustic',drums:true,click:'classic',clickMode:'count',guitarVolume:90,drumVolume:55,clickVolume:50};
+  const choose=(list,r)=>list[Math.floor(r()*list.length)];
+  function generate(input={},seed=Date.now()){
+    const c={...defaults,...input},r=E.rng(seed);
+    if(!Number.isInteger(c.count)||c.count<1||c.count>8)throw Error('音符数量请选择 1–8。');
+    if(!Number.isFinite(c.tempo)||c.tempo<40||c.tempo>220)throw Error('速度范围为 40–220 BPM。');
+    if(!['4/4','3/4','6/8','5/4'].includes(c.meter))throw Error('不支持的拍号。');
+    if(c.key!=='random'&&(!Number.isInteger(+c.key)||+c.key<0||+c.key>11))throw Error('请选择有效主音。');
+    const pool=(c.scalePool||[]).filter(s=>E.scales[s]);
+    if(c.scale==='random'&&!pool.length)throw Error('随机调式范围至少选择一种。');
+    const scale=c.scale==='random'?choose(pool,r):c.scale;
+    if(!E.scales[scale])throw Error('请选择有效调式。');
+    const key=c.key==='random'?Math.floor(r()*12):+c.key;
+    const allowed=new Set(c.materials),units=[];
+    for(const [name,duration]of Object.entries(E.materials))if(allowed.has(name))units.push({name,durations:[duration]});
+    for(const [name,durations]of Object.entries(groups))if(allowed.has(name))units.push({name,durations});
+    if(!units.length)throw Error('至少选一种音符时值或节奏分组；休止、延音不能单独生成。');
+    const can=Array(c.count+1).fill(false);can[0]=true;
+    for(let n=1;n<=c.count;n++)can[n]=units.some(u=>u.durations.length<=n&&can[n-u.durations.length]);
+    if(!can[c.count])throw Error('当前分组无法组成 '+c.count+' 个音；请增加单音时值或调整音符数量。');
+    const config={...E.defaults,key,scale,tempo:c.tempo,meter:c.meter,style:c.style,difficulty:c.difficulty,density:'medium',feel:'style',min:0,max:12,voicing:'seventh',link:'loose',kit:c.kit};
+    let cursor=0,left=c.count,previous=null,lastIndex=-1;
+    const events=[],tonic=48+key,notes=E.scales[scale].map(x=>tonic+x).concat(tonic+12);
+    const h=E.harmony(config,0);
+    function add(duration,material,rest=false,tie=false){
+      let position=null;
+      if(!rest){
+        let candidates=notes.map((midi,index)=>({midi,index}));
+        if(previous&&c.difficulty==='easy')candidates=candidates.filter(n=>Math.abs(n.midi-previous.midi)<=5);
+        else if(previous&&c.difficulty==='medium')candidates=candidates.filter(n=>Math.abs(n.midi-previous.midi)<=7);
+        if(!events.some(e=>!e.rest)&&c.difficulty==='easy')candidates=candidates.filter(n=>h.pcs.includes(E.mod(n.midi)));
+        // Prefer movement; repeating notes remain possible and count as new attacks.
+        const moving=candidates.filter(n=>n.index!==lastIndex);
+        const target=choose(moving.length&&r()>.18?moving:candidates,r);
+        position=E.choose(config,[E.mod(target.midi)],previous,target.midi);
+        if(!position||position.midi!==target.midi)throw Error('当前旋律没有合适的六弦指板位置。');
+        lastIndex=target.index;previous=position;
+      }
+      events.push({start:cursor,duration,material,rest,tie,note:position,velocity:cursor%24===0?.85:.68,gate:c.style==='reggae'?.4:c.style==='rnb'?.94:.82});
+      cursor+=duration;
+    }
+    while(left){
+      const candidates=units.filter(u=>u.durations.length<=left&&can[left-u.durations.length]);
+      const weights=candidates.map(u=>1+(c.style==='bossa'&&['eighth','sync','332'].includes(u.name)?2:0)+(c.style==='funk'&&['sixteenth','sync'].includes(u.name)?2:0)+(c.style==='rock'&&u.name==='quarter'?2:0)+(c.style==='jazz'&&u.name.includes('triplet')?2:0)+(c.style==='rnb'&&u.name.startsWith('dotted')?2:0));
+      let value=r()*weights.reduce((a,b)=>a+b,0),unit=candidates.at(-1);
+      for(let i=0;i<candidates.length;i++){value-=weights[i];if(value<=0){unit=candidates[i];break;}}
+      if(allowed.has('rest')&&cursor>0&&r()<.28)add(unit.durations[0],unit.name,true);
+      for(const duration of unit.durations){
+        const tie=allowed.has('tie')&&cursor%24+duration>=24&&r()<.25;
+        add(tie?duration*2:duration,unit.name,false,tie);
+      }
+      left-=unit.durations.length;
+    }
+    const barTicks=E.ticks(config),totalTicks=Math.ceil(cursor/barTicks)*barTicks;
+    // Padding is silence after the phrase, not another selected rhythm material.
+    const bars=Array.from({length:totalTicks/barTicks},(_,b)=>({events:events.filter(e=>!e.rest&&Math.floor(e.start/barTicks)===b).map(e=>({start:e.start%barTicks,rest:false}))}));
+    return {seed,key,scale,config,events,totalTicks,phraseTicks:cursor,drums:E.drums(config,bars,seed+771),count:c.count};
+  }
+  function timeline(question,settings){
+    const c={...question.config,tempo:settings.tempo},bar=E.ticks(c),items=[];
+    for(const e of question.events)if(!e.rest)items.push({kind:'guitar',time:E.time(c,e.start),duration:(E.time(c,e.start+e.duration)-E.time(c,e.start))*e.gate,midi:e.note.midi,velocity:e.velocity});
+    if(settings.drums)for(const d of question.drums)items.push({kind:'drum',time:E.time(c,d.bar*bar+d.start),track:d.track,velocity:d.velocity});
+    if(settings.clickMode==='all')for(let tick=0;tick<question.totalTicks;tick+=c.meter==='6/8'?36:24)items.push({kind:'click',time:E.time(c,tick),strong:tick%bar===0});
+    return {items:items.sort((a,b)=>a.time-b.time),duration:E.time(c,question.totalTicks),gap:E.time(c,bar*settings.gap),config:c};
+  }
+  root.EarEngine={defaults,generate,timeline};if(typeof module!=='undefined')module.exports=root.EarEngine;
+})(globalThis);
+
+</script><script>
+(function(root){
+  'use strict';
+  // Independent playback state; shared recordings and drum/timing rules.
+  class EarPlayer {
+    constructor(status=()=>{}){this.status=status;this.context=null;this.buffers=new Map();this.sources=new Set();this.token=0;this.playing=false;this.timer=null;this.cycle=0;}
+    stop(message='已停止'){
+      this.token++;this.playing=false;clearInterval(this.timer);this.timer=null;
+      for(const source of this.sources){try{source.stop();}catch{}}
+      this.sources.clear();this.status(message,false);
+    }
+    async prepare(settings){
+      const C=root.AudioContext||root.webkitAudioContext;
+      if(!C)throw Error('浏览器不支持音频播放。');
+      if(!this.context||this.context.state==='closed'){
+        this.context=new C();this.master=this.context.createGain();this.master.gain.value=.55;this.master.connect(this.context.destination);
+        this.buses={};for(const name of ['guitar','drum','click']){const bus=this.context.createGain();bus.connect(this.master);this.buses[name]=bus;}
+      }
+      this.settings={...settings};this.mix(settings);
+      let timeout;
+      try{await Promise.race([this.context.resume(),new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('音频启动超时，请点击播放重试。')),5000);})]);}finally{clearTimeout(timeout);}
+      const bank=root.GuitarSampleBank;
+      const jobs=Object.entries(bank.guitars.steel).map(([midi,data])=>['g'+midi,data]);
+      for(const [name,info]of Object.entries(bank.drums))jobs.push(['d'+name,info.data]);
+      await Promise.all(jobs.map(async([name,data])=>{
+        if(this.buffers.has(name))return this.buffers.get(name);
+        const bytes=Uint8Array.from(atob(data.split(',')[1]),c=>c.charCodeAt(0));
+        const pending=this.context.decodeAudioData(bytes.buffer).then(buffer=>{
+          let peak=0;for(let ch=0;ch<buffer.numberOfChannels;ch++)for(const value of buffer.getChannelData(ch))peak=Math.max(peak,Math.abs(value));
+          if(peak<.0001)throw Error('音色采样为空。');
+          for(let ch=0;ch<buffer.numberOfChannels;ch++){const channel=buffer.getChannelData(ch);for(let i=0;i<channel.length;i++)channel[i]*=.85/peak;}
+          this.buffers.set(name,buffer);return buffer;
+        }).catch(error=>{this.buffers.delete(name);throw error;});
+        this.buffers.set(name,pending);return pending;
+      }));
+    }
+    mix(settings){
+      Object.assign(this.settings||={},settings);
+      if(!this.buses)return;
+      for(const track of ['guitar','drum','click'])this.buses[track].gain.setTargetAtTime(settings[track+'Volume']/100,this.context.currentTime,.015);
+    }
+    register(source,gain){this.sources.add(source);source.onended=()=>{this.sources.delete(source);source.disconnect();gain.disconnect();};}
+    sample(buffer,time,velocity,rate,duration,track){
+      if(!buffer||typeof buffer.then==='function')throw Error('音色尚未就绪。');
+      const ctx=this.context,source=ctx.createBufferSource(),gain=ctx.createGain();source.buffer=buffer;source.playbackRate.value=rate;
+      const length=Math.max(.025,Math.min(buffer.duration/rate,duration??buffer.duration/rate)),end=time+length;
+      gain.gain.setValueAtTime(0,time);gain.gain.linearRampToValueAtTime(velocity,time+.003);
+      gain.gain.setValueAtTime(velocity,Math.max(time+.004,end-.02));gain.gain.linearRampToValueAtTime(0,end);
+      source.connect(gain).connect(this.buses[track]);this.register(source,gain);source.start(time);source.stop(end+.002);
+    }
+    emit(item,time){
+      if(item.kind==='guitar'){
+        const midi=Object.keys(root.GuitarSampleBank.guitars.steel).map(Number).sort((a,b)=>Math.abs(a-item.midi)-Math.abs(b-item.midi))[0];
+        this.sample(this.buffers.get('g'+midi),time,item.velocity,2**((item.midi-midi)/12),item.duration,'guitar');
+      }else if(item.kind==='drum'){
+        const kit=this.settings.kit,info=root.GuitarSampleBank.drums[item.track];
+        this.sample(this.buffers.get('d'+item.track),time,item.velocity*(item.track==='hat'?.45:.85)*(kit==='power'?1.1:1),info.ratio*(kit==='tight'?1.08:kit==='power'?.92:1),kit==='tight'?(item.track==='kick'?.18:.12):undefined,'drum');
+      }else{
+        const ctx=this.context,osc=ctx.createOscillator(),gain=ctx.createGain(),sound=this.settings.click;
+        osc.type=sound==='wood'?'triangle':sound==='electronic'?'square':'sine';osc.frequency.value=sound==='cowbell'?(item.strong?780:620):(item.strong?1320:960);
+        gain.gain.setValueAtTime(0,time);gain.gain.linearRampToValueAtTime(item.strong?.72:.58,time+.002);gain.gain.exponentialRampToValueAtTime(.0001,time+.09);
+        osc.connect(gain).connect(this.buses.click);this.register(osc,gain);osc.start(time);osc.stop(time+.1);
+      }
+    }
+    async play(question,settings){
+      this.stop();const token=++this.token;this.playing=true;this.status('正在准备音色…',true);
+      try{
+        await this.prepare(settings);if(token!==this.token)return;
+        const E=root.GrooveEngine,plan=root.EarEngine.timeline(question,settings),c=plan.config,bar=E.ticks(c);
+        const intro=[],cueTicks=settings.cue?bar:0;
+        if(settings.cue){const h=E.harmony({...c,voicing:'triad'},0);h.intervals.forEach((interval,i)=>intro.push({kind:'guitar',time:i*.02,duration:E.time(c,bar)*.8,midi:48+question.key+interval,velocity:.45}));}
+        if(settings.clickMode!=='off')for(let t=0;t<bar*settings.countIn;t+=c.meter==='6/8'?36:24)intro.push({kind:'click',time:E.time(c,cueTicks+t),strong:t%bar===0});
+        this.intro=intro.sort((a,b)=>a.time-b.time);this.introIndex=0;this.origin=this.context.currentTime+.08;
+        this.start=this.origin+E.time(c,cueTicks+bar*settings.countIn);this.firstStart=this.start;
+        this.plan=plan;this.cycle=0;this.itemIndex=0;this.maxCycles=settings.repeats===0?Infinity:settings.repeats;
+        this.lastStatus='';this.tick();this.timer=setInterval(()=>this.tick(),25);
+      }catch(error){if(token===this.token)this.stop('播放失败：'+error.message);}
+    }
+    tick(){
+      if(!this.playing)return;
+      if(this.context.state!=='running'){this.stop('音频已中断，请重新播放。');return;}
+      try{
+        const now=this.context.currentTime,horizon=now+.12;
+        while(this.introIndex<this.intro.length&&this.origin+this.intro[this.introIndex].time<horizon){const item=this.intro[this.introIndex++];this.emit(item,Math.max(now+.004,this.origin+item.time));}
+        while(this.itemIndex<this.plan.items.length&&this.start+this.plan.items[this.itemIndex].time<horizon){const item=this.plan.items[this.itemIndex++];this.emit(item,Math.max(now+.004,this.start+item.time));}
+        const end=this.start+this.plan.duration;
+        if(now>=end&&this.cycle+1>=this.maxCycles){this.stop('已完成 '+this.maxCycles+' 遍 · 可重听或揭晓答案');return;}
+        const next=end+this.plan.gap;
+        const heardCycle=Math.floor(Math.max(0,now-this.firstStart)/(this.plan.duration+this.plan.gap))+1;
+        if(this.cycle+1<this.maxCycles&&this.itemIndex===this.plan.items.length&&horizon>=next){this.cycle++;this.itemIndex=0;this.start=Math.max(next,now+.01);}
+        const within=(now-this.firstStart)%(this.plan.duration+this.plan.gap);
+        const message=now<this.firstStart?'预备 / 调性提示':within<this.plan.duration?'第 '+heardCycle+' / '+(this.maxCycles===Infinity?'∞':this.maxCycles)+' 遍 · 聆听旋律':'留白练习 · 下一遍即将开始';
+        if(message!==this.lastStatus){this.lastStatus=message;this.status(message,true);}
+      }catch(error){this.stop('播放失败：'+error.message);}
+    }
+    async preview(midi,settings){
+      this.stop();const token=++this.token;
+      try{await this.prepare(settings);if(token!==this.token)return;this.emit({kind:'guitar',midi,duration:1,velocity:.8},this.context.currentTime+.03);}
+      catch(error){if(token===this.token)this.stop('试听失败：'+error.message);}
+    }
+  }
+  root.EarPlayer=EarPlayer;if(typeof module!=='undefined')module.exports=EarPlayer;
+})(globalThis);
+
+</script><script>
+(function(root){
+  'use strict';
+  const E=root.GrooveEngine,C=root.PracticeCatalog,G=root.EarEngine,$=id=>document.getElementById(id);
+  let question=null,keyVisible=true,answerVisible=false,focused=false,settings={...G.defaults};
+  const player=new root.EarPlayer((message,playing)=>{if($('etStatus'))$('etStatus').textContent=message;if($('etPlay')){$('etPlay').textContent=playing?'■ 停止':'▶ 播放';$('etPlay').setAttribute('aria-pressed',String(playing));}});
+  const options=(map,current)=>Object.entries(map).map(([value,label])=>`<option value="${value}"${String(current)===value?' selected':''}>${label}</option>`).join('');
+  const select=(label,id,map,value)=>`<div class="field"><label for="${id}">${label}</label><select id="${id}">${options(map,value)}</select></div>`;
+  const number=(label,id,value,min,max)=>`<div class="field"><label for="${id}">${label}</label><input id="${id}" type="number" value="${value}" min="${min}" max="${max}" step="1"></div>`;
+  function init(){
+    const nav=document.createElement('button');nav.id='navEar';nav.type='button';nav.textContent='听感练习';nav.title='听感练习';$('navRhythm').after(nav);nav.onclick=()=>showTool('ear');
+    const panel=document.createElement('section');panel.id='earPanel';panel.hidden=true;$('rhythmPanel').after(panel);
+    panel.innerHTML=`<section class="card et-settings"><div class="card-head"><h2>听感设置</h2><button class="btn" id="etGenerate">↻ 生成新练习</button></div><div class="et-settings-body"><div class="et-fields">
+      ${select('旋律音符数量','etCount',Object.fromEntries(Array.from({length:8},(_,i)=>[i+1,(i+1)+' 个音'])),4)}
+      ${select('主音','etKey',{random:'随机主音',...Object.fromEntries(E.names.map((name,i)=>[i,name]))},'random')}
+      ${select('调式 / 音阶','etScale',{...C.scales,random:'随机调式（从下方范围选择）'},'major')}
+      ${select('拍号','etMeter',{'4/4':'4/4','3/4':'3/4','6/8':'6/8','5/4':'5/4'},'4/4')}
+      ${select('风格','etStyle',C.styles,'rock')}
+      ${select('旋律难度','etDifficulty',{easy:'入门 · 小跳进',medium:'进阶 · 七度以内',hard:'挑战 · 八度内自由'},'easy')}
+    </div><div id="etScalePool" class="et-section" hidden><h3>随机调式范围</h3><div class="rhythm-chipset">${Object.entries(C.scales).map(([id,name])=>`<label class="et-choice"><input type="checkbox" value="${id}" ${['major','minor'].includes(id)?'checked':''}>${name}</label>`).join('')}</div></div>
+    <div class="et-section"><h3>节奏材料 · 可多选</h3><div id="etMaterials" class="rhythm-chipset">${Object.entries(C.materials).map(([id,name])=>`<button type="button" class="rhythm-chip ${['quarter','eighth'].includes(id)?'active':''}" data-material="${id}" aria-pressed="${['quarter','eighth'].includes(id)}">${name}</button>`).join('')}</div><p class="et-help">音符数量按实际拨弦次数计算；分组保持完整。休止、延音需搭配音符时值，句尾自动留白至小节结束。</p></div>
+    <div class="et-fields et-section">
+      ${number('速度 BPM','etTempo',80,40,220)}
+      <label class="slider-label et-tempo-slider">速度推子 <output id="etTempoOut">80 BPM</output><input id="etTempoSlider" type="range" min="40" max="220" value="80" aria-label="听感练习速度"></label>
+      ${select('播放方式','etRepeatMode',{finite:'播放指定遍数',infinite:'无限循环'},'finite')}
+      ${number('当前练习播放遍数','etRepeats',3,1,99)}
+      ${select('每遍间隔','etGap',{0:'连续播放',1:'留 1 小节自己弹',2:'留 2 小节自己弹'},1)}
+      ${select('预备拍','etCountIn',{0:'无',1:'1 小节',2:'2 小节'},1)}
+      ${select('新题调性展示','etVisibility',{show:'生成后显示',auto:'开始播放后隐藏',hidden:'新题默认隐藏'},'show')}
+      <label class="et-choice"><input id="etCue" type="checkbox">播放前提示一次主和弦</label>
+    </div><p class="et-help">6/8 的 BPM 按附点四分计拍。间隔小节完全静音；节拍器关闭时，预备拍仍留出时间。1–2 个音不足以唯一判断调性，先练模唱和找音。</p>
+    <details class="audio-options et-audio"><summary>音轨与音色设置</summary><div class="et-fields">
+      ${select('鼓组','etKit',{acoustic:'原声套鼓',tight:'紧凑套鼓',power:'强力套鼓'},'acoustic')}
+      <label class="et-choice"><input id="etDrums" type="checkbox" checked>开启鼓组（跟随风格）</label>
+      ${select('节拍器','etClickMode',{off:'关闭',count:'只在预备拍播放',all:'预备拍 + 正式播放'},'count')}
+      ${select('节拍器音色','etClick',{classic:'经典 Click',wood:'木质 Click',cowbell:'Cowbell',electronic:'电子 Click'},'classic')}
+    </div><div class="et-volumes">${[['Guitar','吉他',90],['Drum','鼓组',55],['Click','节拍器',50]].map(([id,name,value])=>`<label class="slider-label">${name}音量 <output id="et${id}Out">${value}%</output><input id="et${id}Volume" aria-label="${name}音量" type="range" min="0" max="100" value="${value}"></label>`).join('')}</div></details>
+    </div></section>
+    <div id="etError" class="error-note" role="alert" hidden></div>
+    <section class="card et-session"><div class="card-head"><h2>先听，再模唱，最后在琴上找音</h2><button class="btn" id="etFocus">专注练习</button></div><div class="et-session-body"><div class="et-key-row"><strong id="etKeyReadout"></strong><button class="btn" id="etToggleKey" aria-pressed="true">隐藏当前调</button></div><p id="etMeta" class="et-help"></p><p id="etStatus" role="status" aria-live="polite">准备好后开始</p><div class="et-actions"><button class="btn primary" id="etPlay" aria-pressed="false">▶ 播放</button><button class="btn" id="etReplay">↺ 从头重听</button><button class="btn" id="etNext">下一题</button><button class="btn" id="etReveal" aria-expanded="false" aria-controls="etAnswer">揭晓旋律答案</button></div><p class="et-help et-shortcut">空格播放 / 停止 · 重听保持同一道题 · 揭晓后可点音符试听</p></div></section>
+    <section class="card et-answer" id="etAnswer" hidden><div class="card-head"><h2>旋律答案</h2>${select('简谱','etNotation',{movable:'首调（当前主音 = 1）',fixed:'固定调（C = 1）'},'movable')}</div><div class="et-answer-body"><p class="et-help">音名数字标记八度；首调数字相对主音，↑ 表示高八度。时值以四分音符为 1 拍；6/8 的 1 拍口令为附点四分。</p><div class="et-note-list" id="etNotes"></div><div class="et-score-wrap" id="etScore"></div><h3>推荐指板位置 · 标准六弦调弦</h3><div class="et-board-wrap" id="etBoard"></div><p class="et-help">图中数字是旋律出现顺序；蓝色为主音。详细弦品标在上方音符卡片中。</p></div></section>`;
+    $('etGenerate').onclick=$('etNext').onclick=generate;
+    $('etPlay').onclick=togglePlay;$('etReplay').onclick=()=>play();
+    $('etToggleKey').onclick=()=>{keyVisible=!keyVisible;renderKey();};
+    $('etReveal').onclick=()=>{answerVisible=!answerVisible;renderAnswer();};
+    $('etNotation').onchange=renderAnswer;
+    $('etFocus').onclick=()=>{focused=!focused;applyFocus();};
+    $('etScale').onchange=()=>{$('etScalePool').hidden=$('etScale').value!=='random';};
+    $('etRepeatMode').onchange=()=>{$('etRepeats').disabled=$('etRepeatMode').value==='infinite';};
+    $('etVisibility').onchange=()=>{keyVisible=$('etVisibility').value!=='hidden';renderKey();};
+    for(const button of panel.querySelectorAll('[data-material]'))button.onclick=()=>{const on=button.classList.toggle('active');button.setAttribute('aria-pressed',String(on));markPending();};
+    panel.querySelector('.et-settings').addEventListener('change',event=>{
+      if(['etGuitarVolume','etDrumVolume','etClickVolume'].includes(event.target.id))return;
+      if(['etCount','etKey','etScale','etMeter','etStyle','etDifficulty'].includes(event.target.id)||event.target.closest('#etScalePool'))markPending();
+      else if(player.playing)player.stop('设置已更改，点击播放重听本题');
+    });
+    for(const id of ['etTempo','etTempoSlider'])$(id).oninput=()=>{const value=Number($(id).value);if(!Number.isFinite(value)||value<40||value>220)return;$('etTempo').value=$('etTempoSlider').value=value;$('etTempoOut').value=value+' BPM';if(player.playing)player.stop('速度已更改，重听时按新速度播放');renderMeta();};
+    for(const id of ['Guitar','Drum','Click'])$('et'+id+'Volume').oninput=()=>{$('et'+id+'Out').value=$('et'+id+'Volume').value+'%';player.mix(mixSettings());};
+    generate();
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)player.stop();});
+    window.addEventListener('pagehide',()=>player.stop());
+  }
+  function mixSettings(){return {guitarVolume:+$('etGuitarVolume').value,drumVolume:+$('etDrumVolume').value,clickVolume:+$('etClickVolume').value};}
+  function read(){
+    const tempo=+$('etTempo').value,repeats=$('etRepeatMode').value==='infinite'?0:+$('etRepeats').value;
+    if(!Number.isFinite(tempo)||tempo<40||tempo>220)throw Error('速度范围为 40–220 BPM。');
+    if(!Number.isInteger(repeats)||repeats<0||repeats>99||($('etRepeatMode').value==='finite'&&repeats===0))throw Error('播放遍数请选择 1–99。');
+    return {key:$('etKey').value,scale:$('etScale').value,scalePool:[...$('etScalePool').querySelectorAll('input:checked')].map(e=>e.value),count:+$('etCount').value,materials:[...$('etMaterials').querySelectorAll('.active')].map(e=>e.dataset.material),tempo,meter:$('etMeter').value,style:$('etStyle').value,difficulty:$('etDifficulty').value,repeats,gap:+$('etGap').value,countIn:+$('etCountIn').value,visibility:$('etVisibility').value,cue:$('etCue').checked,kit:$('etKit').value,drums:$('etDrums').checked,click:$('etClick').value,clickMode:$('etClickMode').value,...mixSettings()};
+  }
+  function markPending(){if(question)$('etStatus').textContent='生成参数已更改 · 点击「生成新练习」应用；重听仍为原题';}
+  function error(message){$('etError').hidden=!message;$('etError').textContent=message;}
+  function generate(){
+    player.stop();try{const next=read();const generated=G.generate(next,Math.floor(Math.random()*0x7fffffff));settings=next;question=generated;keyVisible=settings.visibility!=='hidden';answerVisible=false;error('');renderKey();renderMeta();renderAnswer();$('etStatus').textContent='新练习已生成 · 点击播放开始';}catch(e){error(e.message);}
+  }
+  function renderKey(){if(!question)return;$('etKeyReadout').textContent=keyVisible?E.names[question.key]+' · '+C.scales[question.scale]:'当前调已隐藏';$('etToggleKey').textContent=keyVisible?'隐藏当前调':'显示当前调';$('etToggleKey').setAttribute('aria-pressed',String(keyVisible));if(answerVisible)renderAnswer();}
+  function renderMeta(){if(question)$('etMeta').textContent=question.count+' 个音 · '+$('etTempo').value+' BPM · '+question.config.meter+' · '+C.styles[question.config.style]+' · '+question.totalTicks/E.ticks(question.config)+' 小节';}
+  function label(midi){return $('etNotation').value==='fixed'?['1','♭2','2','♭3','3','4','♯4','5','♭6','6','♭7','7'][E.mod(midi)]:C.degree(question.scale,midi-question.key)+(midi>=60+question.key?'↑':'');}
+  function renderAnswer(){
+    $('etAnswer').hidden=!answerVisible;$('etReveal').setAttribute('aria-expanded',String(answerVisible));$('etReveal').textContent=answerVisible?'收起旋律答案':'揭晓旋律答案';
+    // Clear hidden answers so notes are not exposed in tooltips/accessibility text.
+    if(!answerVisible){$('etNotes').replaceChildren();$('etBoard').replaceChildren();$('etScore').replaceChildren();return;}
+    const events=question.events,notes=events.filter(e=>!e.rest);
+    $('etNotes').innerHTML=notes.map((e,i)=>`<button type="button" class="et-note ${E.mod(e.note.midi)===question.key?'et-root':''}" data-et-note="${i}"><span>第 ${i+1} 音</span><strong>${label(e.note.midi)}</strong><b>${E.names[E.mod(e.note.midi)]}${Math.floor(e.note.midi/12)-1}</b><span>${e.note.string} 弦 · ${e.note.fret} 品</span><small>${C.materials[e.material]}${e.tie?' × 2 延音':''}</small></button>`).join('');
+    $('etNotes').querySelectorAll('[data-et-note]').forEach(button=>button.onclick=()=>{try{stopOthers();player.preview(notes[+button.dataset.etNote].note.midi,read());}catch(e){error(e.message);}});
+    const bar=E.ticks(question.config);let index=0;
+    const rhythm=Array.from({length:question.totalTicks/bar},(_,b)=>{
+      const from=b*bar,to=from+bar;
+      return '<div class="et-rhythm-bar"><span>第 '+(b+1)+' 小节</span><div class="et-rhythm-lane" style="--beats:'+bar/24+'">'+events.filter(e=>e.start<to&&e.start+e.duration>from).map(e=>{
+        const left=Math.max(from,e.start),right=Math.min(to,e.start+e.duration),continued=e.start<from;
+        return '<span class="et-rhythm-event '+(e.rest?'et-rest':'')+'" style="left:'+((left-from)/bar*100)+'%;width:'+((right-left)/bar*100)+'%" title="'+(e.rest?'休止':C.materials[e.material])+'">'+(e.rest?'休':continued?'⌒':label(e.note.midi))+'</span>';
+      }).join('')+'</div></div>';
+    }).join('');
+    $('etScore').innerHTML=rhythm+'<details class="et-timing"><summary>查看精确节奏落点与时值</summary><table class="et-score"><thead><tr><th>顺序</th><th>小节</th><th>起点（四分拍）</th><th>时值（四分拍）</th></tr></thead><tbody>'+events.map(e=>`<tr><th>${e.rest?'休止':++index}</th><td>${Math.floor(e.start/bar)+1}</td><td>${(e.start%bar/24+1).toFixed(2)}</td><td>${(e.duration/24).toFixed(2)}${e.tie?' · 延音':''}</td></tr>`).join('')+'</tbody></table></details>';
+    const width=820,height=250,x=f=>54+f*58,y=s=>35+(s-1)*37;
+    let svg=`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="六弦指板，显示旋律顺序和位置">`;
+    for(let s=1;s<=6;s++)svg+=`<text x="8" y="${y(s)+4}" class="et-board-label">${s} 弦</text><path d="M 44 ${y(s)} H 786" class="et-wire"/>`;
+    for(let f=0;f<=12;f++)svg+=`<text x="${x(f)}" y="17" text-anchor="middle" class="et-board-label">${f}</text><path d="M ${x(f)+29} 25 V 230" class="et-fret"/>`;
+    const positions=new Map();notes.forEach((e,i)=>{const key=e.note.string+','+e.note.fret;if(!positions.has(key))positions.set(key,[]);positions.get(key).push(i+1);});
+    for(const [pos,order]of positions){const [s,f]=pos.split(',').map(Number),rootNote=E.mod([64,59,55,50,45,40][s-1]+f)===question.key;
+      svg+=`<rect x="${x(f)-25}" y="${y(s)-15}" width="50" height="30" rx="4" fill="${rootNote?'#65b8ed':'#85dfa1'}"/><text x="${x(f)}" y="${y(s)+4}" text-anchor="middle" class="et-board-order">${order.slice(0,4).join('·')}</text>`;
+      if(order.length>4)svg+=`<text x="${x(f)}" y="${y(s)+13}" text-anchor="middle" class="et-board-order">${order.slice(4).join('·')}</text>`;
+    }
+    $('etBoard').innerHTML=svg+'</svg>';
+  }
+  function stopOthers(){stopArpeggio();GuitarGroove.stop();}
+  function play(){
+    if(!question)return;try{settings=read();error('');if(settings.visibility==='auto'){keyVisible=false;renderKey();}stopOthers();player.play(question,settings);}catch(e){error(e.message);}
+  }
+  function togglePlay(){if(player.playing)player.stop();else play();}
+  function applyFocus(){document.body.classList.toggle('ear-focus',focused);$('etFocus').textContent=focused?'退出专注':'专注练习';$('etFocus').setAttribute('aria-pressed',String(focused));}
+  function stop(){player.stop();focused=false;if($('etFocus'))applyFocus();}
+  root.EarTraining={init,stop,togglePlay};
+})(globalThis);
+
+</script><script>EarTraining.init();</script><script>
+/* Presentation only: retain native range inputs and their existing audio handlers. */
+(() => {
+  // The navigation is installed after all four tools have created their buttons.
+  const navigationIcons = {
+    navEar: '<path d="M8 8a5 5 0 0 1 10 0c0 4-5 4-5 8a3 3 0 0 1-6 0M11 8a2 2 0 0 1 4 0c0 2-3 2-3 5M21 6a9 9 0 0 1 0 6"/>',
+    navChord: '<path d="M3 19h18M5 15V9m7 3V6m7 3V3"/><circle cx="5" cy="15" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="9" r="2"/>',
+    navRhythm: '<path d="M3 12h3l3-7 5 14 3-7h4"/>',
+    navKnowledge: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m6-16v16M3 9h18M3 15h18"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/>',
+    navChordShapes: '<path d="M5 5h14M5 10h14M5 15h14M5 20h14M5 5v15M12 5v15M19 5v15"/><path d="M5 5h14" stroke-width="3"/><circle cx="5" cy="12.5" r="2" fill="currentColor" stroke="none"/><circle cx="12" cy="7.5" r="2" fill="currentColor" stroke="none"/><circle cx="19" cy="17.5" r="2" fill="currentColor" stroke="none"/>'
+  };
+  Object.entries(navigationIcons).forEach(([id, drawing]) => {
+    const button = document.getElementById(id);
+    if (!button) return;
+    const label = button.textContent.trim();
+    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    icon.setAttribute('viewBox', '0 0 24 24');
+    icon.setAttribute('class', 'studio-nav-icon');
+    icon.setAttribute('aria-hidden', 'true');
+    icon.setAttribute('focusable', 'false');
+    icon.innerHTML = drawing;
+    button.prepend(icon);
+    button.title = label;
+    button.setAttribute('aria-label', label);
+  });
+  const volumes = new Set(['ggGuitarVolume', 'ggDrumVolume', 'ggClickVolume']);
+  function paint(input) {
+    const min = Number(input.min || 0), max = Number(input.max || 100);
+    const percentage = Math.max(0, Math.min(100, (Number(input.value) - min) / (max - min || 1) * 100));
+    input.style.setProperty('--studio-fill', `${percentage}%`);
+    if (volumes.has(input.id)) {
+      let output = document.getElementById(`${input.id}Readout`);
+      if (!output) {
+        output = document.createElement('output');
+        output.id = `${input.id}Readout`;
+        output.htmlFor = input.id;
+        output.className = 'studio-volume-value';
+        input.before(output);
+      }
+      output.value = `${input.value}%`;
+    }
+  }
+  function refresh() { document.querySelectorAll('input[type=range]').forEach(paint); }
+  document.addEventListener('input', event => {
+    if (event.target.matches('input[type=range]')) paint(event.target);
+  });
+  // Restore/daily practice can recreate controls and set values programmatically.
+  let queued = false;
+  const observer = new MutationObserver(records => {
+    if (queued || !records.some(record => Array.from(record.addedNodes).some(node =>
+      node.nodeType === 1 && (node.matches('input[type=range]') || node.querySelector('input[type=range]'))))) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; refresh(); });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+  document.addEventListener('click', () => requestAnimationFrame(refresh));
+  document.addEventListener('change', () => requestAnimationFrame(refresh));
+  refresh();
+})();
+
+</script></body></html>

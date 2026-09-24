@@ -1,6 +1,6 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
-const code=fs.readFileSync('assets/groove-app.js','utf8');
-const E=require('../assets/groove-engine.js');
+const code=fs.readFileSync('green-ui/groove-app.js','utf8');
+const E=require('../green-ui/groove-engine.js');
 function extract(name,next){return code.slice(code.indexOf('function '+name+'('),code.indexOf('function '+next+'('));}
 for(const meter of ['4/4','3/4','6/8','5/4']){
  const config={...E.defaults,meter},notes=[{midi:60,role:'root',string:2,fret:1}];

@@ -1,75 +1,72 @@
 # 一起练琴吧：项目交接
 
-更新：2026-09-18。本文记录当前本地工作区事实，供接手的开发者或 AI 从磁盘独立继续工作；账号状态、网站部署状态需重新核实。不要把本文当成任何账号操作授权。
+更新：2026-09-24。用户已确认 **Studio Green 绿色版为后续主版本** 并授权发布到现有 GitHub 仓库。以下当前入口与维护规则优先于后面的历史记录。
 
-## 项目入口与运行
+## 当前入口与维护规则
 
-- 工作区：`/Users/xiejialin_1/Documents/Codex/2026-09-12/logo-logo-md`
-- 用户日常打开：`outputs/fretboard-lab.html`，可直接用浏览器打开 `file://`。这是**构建产物**，不要直接在其中编辑。
-- 主源码：`index.html`，包含琶音工作台的 HTML/CSS/JS，以及其他模块的入口。
-- 本地构建：在项目根目录执行 `node scripts/build.cjs`。该命令生成 `outputs/fretboard-lab.html` 和 `publish/index.html`，并复制采样许可到各自的 `assets/ATTRIBUTION.md`。构建产物把外部 CSS、JS 和音色嵌入 HTML；修改源码后必须重新构建，用户的本地文件才会更新。
-- 源码 `index.html` 本身引用 `assets/` 文件，若直接以 `file://` 打开会有浏览器资源/权限差异；优先测试构建产物。需要 HTTP 时可用 `python3 -m http.server 8765 --bind 127.0.0.1`，但本环境可能因网络沙箱拒绝绑定，需要授权。
-- Node 为构建和测试所需，无 `package.json`，无安装依赖步骤。当前目录已初始化为 Git 仓库，并配置远程 `origin` 指向 `https://github.com/limhhhh1231/practice-guitar.git`；推送前先同步远程分支，避免合并冲突。
+- 工作区：`/Users/xiejialin_1/Documents/Codex/2026-09-12/logo-logo-md`。
+- **唯一主源码入口：`green-ui/index.html`，模块在 `green-ui/`。**
+- **根目录 `index.html` 现为发布构建产物，不再是源码。** 不要直接修改任何发布 HTML。
+- 构建命令：`node scripts/build.cjs`，内部调用 `green-ui/build.cjs`；任意工作目录均可运行该脚本的绝对路径。
+- 同步生成四个内容相同的入口：根 `index.html`、`outputs/fretboard-lab-green.html`、`outputs/fretboard-lab.html`、`publish/index.html`。用户当前书签仍有效。
+- 构建内联 JS、CSS 和音色，复制采样许可至各入口对应的 `assets/ATTRIBUTION.md`。
+- `assets/*.js`、`assets/*.css` 保留为旧版遗留，**不是当前运行/测试数据源**；以后不要只修改这些旧文件。
+- 原橙色版可从 Git 提交 `b33edbb` 恢复。用户先前“不改原版”的约束已由本次“绿色版为主并发布”的明确指示更新。
+- `.DS_Store` 已忽略，不提交个人缓存、凭据和无关文件。
 
-## 代码地图
+## 当前功能与源码地图
 
-| 文件 | 职责 |
+五个菜单：和弦琶音练习、吉他律动生成器、听感练习、指板知识、常用和弦指型。
+
+| 路径（均相对 green-ui/） | 职责 |
 | --- | --- |
-| `index.html` | 整体布局、菜单切换、和弦琶音、动机训练、琶音采样播放和音量。部分 CSS/JS 是长单行，修改时注意局部匹配。 |
-| `assets/groove-engine.js` | 律动生成纯逻辑：调式、音程、和声、节奏、六弦指型、鼓组；可在 Node 中测试。 |
-| `assets/groove-app.js` | 律动工作台 UI、状态、播放器、预备拍、区间循环、听弹交替、专注模式、浏览器收藏。 |
-| `assets/groove.css` | 律动页面、设置面板和专注谱面样式。 |
-| `assets/fretboard-knowledge.js` / `.css` | 指板知识菜单、音程表、协和分类、筛选、六弦空弦及交互式指型图。 |
-| `assets/chord-shapes.js` / `.css` | 常用和弦指型菜单；书页式全指板/CAGED 矩阵、特殊和弦数据、和弦图与章节筛选。 |
-| `assets/sample-bank.js` | 内嵌吉他与鼓 MP3 采样，体积较大；勿手工修改。 |
-| `assets/ATTRIBUTION.md` | FluidR3 采样来源及 CC BY 3.0 署名；发布时必须保留。 |
-| `scripts/build.cjs` | 单文件网页打包并生成 `publish/` 发布目录。 |
-| `scripts/build-samples.cjs` | 采样构建脚本；一般功能修改无需运行。 |
-| `tests/groove-engine.test.cjs` / `tests/practice-playback.test.cjs` | 音乐生成及区间播放/交替练习的 Node 测试。 |
-| `tests/fretboard-knowledge.test.cjs` / `tests/chord-shapes.test.cjs` | 音程结构枚举、去重、错位排布，以及和弦指型音高/音程校验。 |
-| `FEATURE-CHECKLIST.md` | 早期律动模块验收记录，未覆盖后续全部改动；以当前源码为准。 |
+| `index.html` | 页面结构、琶音/动机、导航、空格播放停止 |
+| `green-ui.css` / `green-ui.js` | 绿色外观、推子读数、折叠菜单图标 |
+| `groove-engine.js` | 共用调式、和声、六弦位置、节奏时值、鼓组及 Swing 时间逻辑 |
+| `practice-catalog.js` | 共用 10 种调式、风格、节奏名称及音级标签 |
+| `groove-app.js` / `groove.css` | 律动设置、模进、日课、阶梯、循环、音频和专注 |
+| `ear-engine.js` | 1–8 音生成、节奏数量约束、音域、时间线 |
+| `ear-audio.js` | 听感独立音频状态、采样、定次循环、停止令牌 |
+| `ear-app.js` / `ear.css` | 听感界面、调性隐藏、答案、六弦位置 |
+| `fretboard-knowledge.js` / `.css` | 音程、协和标签、典型结构与手动弦组 |
+| `chord-shapes.js` / `.css` | CAGED、书页式和弦图、特殊和弦 |
+| `sample-bank.js` / `assets/ATTRIBUTION.md` | 内嵌真实音色及来源许可，勿丢失署名 |
+| `build.cjs` | 从主源码生成全部发布入口 |
 
-## 已有功能与重要约定
+主色 `#35CE68`；根音蓝色，和弦音浅绿；品牌 B 款实心原声吉他为 `#102719`。桌面侧栏固定可收起，iPad 触控和清晰谱面是重点。三个相关工具默认 Ionian 大调，读取同一音阶数据；五声/Blues 七和弦使用引擎母调规则，并标注。
 
-- 平台「一起练琴吧」有四个工具：和弦琶音练习、吉他律动生成器、指板知识、常用和弦指型。桌面左侧菜单可收起并固定为视口高度，页面滚动时不移动；820px 以下恢复顶部导航。页面主强调色为 `#FF6A3B`。
-- 琶音：前 12 品加空弦、调式内七和弦与简谱、把位范围、动机训练；根音蓝色，和弦音橙色。标准调弦从细到粗 E4 B3 G3 D3 A2 E2。七和弦例：Cmaj7 = C E G B。
-- 律动：六弦标准/Drop D、常用和声与节奏材料、六线谱/音区视图、鼓组和节拍器、干声吉他采样。设置区域位于谱面上方，可收起；播放控制固定在底部。预备拍可选 0/1/2 小节，区间或单小节循环，听弹交替时仅在自己弹的一轮静音吉他、鼓和节拍器继续。专注模式隐藏导航与设置，保留谱面和播放/退出/缩放控制；宽屏每行两小节，小屏单列。扩展音可选“无”，此时扩展和弦退回七和弦。
-- 指板知识：常见音程、每个音程从 1～7 起音的音级拼写、协和类别语义色标签和表格筛选；一张六弦空弦图同时标注五组相邻空弦关系。“全部典型结构”独立于起音品位，相同弦距与相对品位的结构只显示一个代表，每组用独立颜色连接，横向跨度不超过 5 品；手动选弦模式才显示起音弦、目标弦和起音品位。相邻 3 弦 G 到 2 弦 B 是大三度（4 半音），其他相邻弦是纯四度（5 半音），不可直接套用四弦贝斯图。
-- 常用和弦指型：采用上到下为品位、左到右为 6～1 弦的书页式和弦图，红色 R 标根音，蓝色圆点标其他音程。章节包括“全指板和弦终极练习”（C 大调内七个和弦按五个把位横排）、“CAGED 所有和弦指型”（五种外形对比大三/小三/大七/属七/小七/半减七）、“CAGED 挂留和弦”，以及 47 张特殊和弦图：14 个斜杠和弦、19 个挂留/七挂四、7 个加音、7 个强力和弦。基础指型 40 张，加特殊和弦共 87 张；数据需通过 `tests/chord-shapes.test.cjs` 的音高计算校验。
-- 律动预设和收藏在**当前浏览器的 localStorage**（键 `guitarGrooveProject`、`guitarGrooveFavorites`），不是 GitHub 账号数据，也不会自动跨设备同步。`导出 JSON` 可备份生成结果，但现有界面不提供 JSON 导入；不要声称导出文件可一键恢复。浏览器清理网站数据、更换 `file://` 与 HTTPS 来源或换设备，可能导致收藏不可见。发布静态 HTML 不会迁移这些数据。
-- 所有吉他/鼓采样已内嵌用于离线播放，但页面仍引用 Google Fonts；字体离线时会回退。浏览器音频须由用户点击启动；不能仅凭网页输出电平证明 iPad 实际扬声器可听。
+标准调弦从 1 到 6 弦为 E4 B3 G3 D3 A2 E2（MIDI 64/59/55/50/45/40），五弦一品 B♭、三品 C。保持根音、音级、弦品正确性。不要用四弦贝斯结构替代吉他。
 
-## 验证步骤
+## 检查与设备验收
 
 在项目根目录运行：
 
 ```sh
 node tests/groove-engine.test.cjs
 node tests/practice-playback.test.cjs
-node tests/fretboard-knowledge.test.cjs
-node tests/chord-shapes.test.cjs
 node tests/arpeggio-board.test.cjs
-node --check assets/groove-app.js
-node --check assets/fretboard-knowledge.js
-node --check assets/chord-shapes.js
+node tests/chord-shapes.test.cjs
+node tests/fretboard-knowledge.test.cjs
+node tests/ear-training.test.cjs
 node scripts/build.cjs
+git diff --check
 ```
 
-接手时还应在桌面和 iPad mini 近似尺寸实际打开构建产物，操作四个菜单、设置收起、专注/退出、谱面缩放、和弦章节筛选与矩阵横向滚动、单小节循环、预备拍、听弹交替、收藏/撤销，并分别试听吉他/鼓/节拍器。音频和布局不能只靠 Node 测试断言。音程表的七组拼写与升降记号，以及跨 G/B 弦的目标品位，应单独核对。浏览器预览如果需要本地服务器，结束时停止自己启动的会话。
+以上测试已改为针对 green-ui 主源码。听感测试包括 6720 组生成、960 组琶音渲染、鼓组、时值、循环和异步停止。实际桌面/iPad 渲染、触控和音频听感仍需设备验收；之前本地浏览器自动预览遭策略拦截，不能将 Node 测试等同于听音。
 
-## GitHub Pages 状态
+测试流程：听感菜单 → 默认 4 音/80 BPM/3 遍 → 检查三遍后停止 → 隐藏调性 → 重听 → 揭晓简谱/节奏/六弦位置；更改调式后生成新题。具体步骤见 `green-ui/README.md`。
 
-- 曾通过 GitHub 网页界面创建公开仓库 `limhhhh1231/practice-guitar`，启用 `main` 分支根目录 GitHub Pages；公开地址为 `https://limhhhh1231.github.io/practice-guitar/`。用户名 `lim` 已被其他组织占用，用户决定**不更改用户名**。
-- 2026-09-18 17:55 已通过 GitHub 网页上传 `publish/index.html` 到 `main`，提交 `40154bd2b08f58126e2b4d7435cee23ef1a13082`（`Update practice tools and chord reference`）。Pages 设置显示该提交已部署；公网页面已实测存在“常用和弦指型”菜单，CSS 主色为 `#FF6A3B`，浏览器控制台无错误。后续接手仍应核对最新提交，避免把这条历史状态当成永久现状。
-- Pages 设置存在“Custom domain”输入框，但只能填写用户拥有并可配置 DNS 的完整域名，例如 `practiceguitartogether.com` 或某个子域名；`PracticeGuitarTogether` 只是名称，不是合法域名。若仅希望改善 GitHub Pages 路径，可在用户明确授权后把仓库重命名为 `PracticeGuitarTogether`，地址会变成 `https://limhhhh1231.github.io/PracticeGuitarTogether/`，但这不属于自定义域名。
-- 若用户明确要求同步线上：先构建并测试，再在 GitHub 仓库中更新根目录 `index.html`；同时确认 `assets/ATTRIBUTION.md` 与 `.nojekyll` 存在。可使用 GitHub 网页上传或建立受控 Git 工作流，但不要在此无 Git 的工作区盲目初始化/覆盖远端。上传属于对外发布，应确认具体目标仓库和待发布内容；不要上传本地个人文件、账户信息或工作区其他目录。发布后查看 Pages 部署状态并实际访问公网 URL 验证。
+## 浏览器数据与发布
 
-## 接手原则
+- 仓库：`https://github.com/limhhhh1231/practice-guitar.git`，分支 `main`；Pages 现有入口：`https://limhhhh1231.github.io/practice-guitar/`，根目录首页。
+- 绿色版收藏/预设键：`guitarGrooveGreenFavorites`、`guitarGrooveGreenProject`；旧版键保留，不自动覆盖或迁移。本地 file 与线上 HTTPS 的浏览器存储不互通；发布不会上传浏览器收藏。
+- 回滚基线：本次发布前远程 `main` 为 `b33edbbbde961a5d396ae50626afbedf9afa8477`，已核实与本地一致。
+- 维护流程：检查用户改动 → 修改 green-ui → 测试 → 构建 → 检查差异 → 显式暂存相关文件 → 提交推送 → 校验线上 HTML。未来发布仍需用户授权，不强推。
+- 当前发布进度见文末最新条目；Pages 在线结果需以实际校验为准。
 
-2026-09-18 修复琶音指板弦序错误：调弦数组按 1→6 弦排列，DOM 行必须为 s+1，不能使用 6-s。空弦与按弦音均已修正；新增 arpeggio-board 测试检查 768 种渲染状态。标准调弦 5 弦 1 品为 B♭，3 品为 C。20:53 已上传修复到 main，提交 0704f8846268ee95dcca48ebc0acd0c8d23ab4bd（Fix arpeggio fretboard string order）。公网 DOM 已确认 1→6 弦空弦为 E/B/G/D/A/E，C 大调第五弦第三品显示 C/1、第一品不显示调内标记。
+## 历史记录说明
 
-先检查本地文件的当前内容和时间，不要用文档覆盖用户新改动。只改源码，通过 `node scripts/build.cjs` 更新交付 HTML。用户惯用简体中文，关注 iPad mini 单手操作、清晰的大字谱面、六弦准确性、音频真实可听，以及本地与线上状态的明确区分。没有用户的新请求时，不要自行改名、发布或迁移账号数据。
-
+下方“独立副本、不上传、原版不动”等内容记录当时状态，**已由 2026-09-24 用户主版切换与发布授权更新**，不要据此恢复旧构建链。
 
 ## 2026-09-22 更新记录
 
@@ -207,3 +204,43 @@ git diff --check
 - 收起后设置面板仍保留在原位置，只显示一条顶部栏，包含“律动设置”和“展开设置”按钮。
 - 展开/收起按钮始终留在 `.settings-header` 内，不再移动到播放按钮前。
 - 已重新构建 `outputs/fretboard-lab.html` 与 `publish/index.html`，并通过现有测试。
+
+## 2026-09-24 Studio Green 独立视觉副本
+
+- 用户要求参考深炭灰音频插件图片，采用绿色主色、精致小圆角与细线；本次在 `green-ui/` 建立独立副本。
+- 预览入口：`outputs/fretboard-lab-green.html`；开发入口：`green-ui/index.html`。
+- 主色 `#35CE68`、和弦音 `#85DFA1`，根音保留蓝色 `#65B8ED`。
+- 四菜单视觉统一；连续数值滑杆采用带刻度的金属推子外观，保留原生输入与触控/键盘功能；三路音量增加百分比读数。
+- 左侧品牌标识和页面标题标识改为简洁吉他图形，保留绿色圆角徽章。
+- 后续视觉修正：两处吉他 SVG 改为白色；所有原生 select 的 option/optgroup 显式设为深色背景、浅色文字，选中项用深绿色，修复展开后白底浅字的问题。
+- 最终 logo 配色调整：按用户最新要求，两处吉他图形由白色改为偏绿近黑色 `#102719`，绿色底座及下拉菜单样式不变。
+- 用户选定 `green-ui/logo-options.svg` 中 B 款：两处品牌 logo 已替换为竖向实心原声吉他，保留绿黑色图形、音孔与琴弦细节，底座尺寸不变。
+- 音轨与音色设置的 summary 原有最小高度使文字顶部对齐，造成收起状态上下留白不均；已改为 flex 垂直居中，统一箭头位置。展开后标题与内容间距 12px，末尾 mixer 去掉多余下边距，保留卡片上下 14px 内边距。
+- 收起侧栏的四个菜单改为统一线性 SVG 图标：琶音用阶梯音符，律动用节奏脉冲，指板知识用横向指板网格，常用和弦指型用竖向和弦图。图标仅在收起状态显示，按钮保留完整 title 与 aria-label。
+- 专属样式/辅助脚本为 `green-ui/green-ui.css`、`green-ui/green-ui.js`；生成、理论和音频逻辑沿用复制的原版。
+- 副本预设/收藏使用独立存储键 `guitarGrooveGreenProject` / `guitarGrooveGreenFavorites`。
+- 独立构建命令：`node green-ui/build.cjs`，只输出绿色 HTML。原版源码、原版输出与发布目录未修改；未提交或推送 GitHub。
+- 副本为源码快照，后续功能更新需主动同步；详见 `green-ui/README.md` 的文件边界与验收流程。
+- 已通过副本五组现有音乐理论/调度测试与语法检查。浏览器安全策略拦截了本地文件预览，实际渲染、iPad 触控和听感仍需手动验收，不能视为已视觉验证。
+
+## 2026-09-24 听感练习与调式统一（绿色版）
+
+- 新菜单「听感练习」位于律动生成器之后，折叠侧栏用耳朵图标；仅更新 `green-ui/` 与独立绿色输出，原版和线上未修改。
+- `practice-catalog.js` 统一调式 / 风格 / 节奏名称及音级标签。三工具默认 `major`（Ionian 大调）；全部 10 种调式直接使用 GrooveEngine.scales，和声使用 GrooveEngine.harmony。
+- 琶音支持 Phrygian、Lydian、Locrian、大调五声、小调五声与 Blues。五声 / Blues 的七和弦沿用引擎母调规则，并明确标注；选和弦时补充显示母调和弦内音，根音来自真实和声根音，保留背景调式音。
+- 听感生成支持 1–8 个发声音符、固定或随机主音 / 调式、随机调式范围、多选全部原节奏材料、四种拍号、七种风格、三级难度。音域一八度，推荐标准六弦 0–12 品位置。分组保持完整，无法匹配数量时明确报错。
+- 默认随机主音、Ionian、4 音、80 BPM、3 遍、间隔 1 小节、预备 1 小节。可选择 1–99 遍或无限循环，独立调节鼓组 / 节拍器及三路音量，支持主和弦提示。
+- 音频独立 AudioContext，复用真实干吉他和鼓采样；鼓点用现有 E.drums，Swing 与 6/8 用 E.time。短窗口排程、停止令牌取消异步启动，最终一遍结束后不多排下一轮；间隔小节完全静音。
+- 生成后展示当前调，支持播放自动隐藏、新题默认隐藏、手动展示；旋律答案默认不写入 DOM。揭晓后有首调 / 固定调、音名八度、节奏时间线、精确节奏表、六弦位置与单音试听。
+- 生成参数更改后须点击生成，重听不换题；速度 / 播放 / 伴奏设置更改后重听沿用原旋律。切菜单或隐藏页面停止声音；支持专注与空格播放停止。
+- 新代码：`ear-engine.js`（纯生成与时间线）、`ear-audio.js`（音频）、`ear-app.js`（界面）、`ear.css`。`build.cjs` 内联以上模块和共用目录。
+- 测试：`node tests/ear-training.test.cjs` 覆盖 6720 组生成、全部时值 / 分组、随机范围、鼓组复用、960 组琶音渲染、有限 / 无限循环、留白、停止及异步取消。入口与步骤见 `green-ui/README.md`。
+- 浏览器本地预览受策略限制，未声称完成实际渲染或设备音频验收；需用户手动打开绿色 HTML 核验听感和触控。
+
+## 2026-09-24 绿色版正式主版发布
+
+- 用户明确确认后续以绿色版为主，并要求推送到 GitHub。本次将 `green-ui/` 提升为唯一主源码，根 `index.html` 改为生成的自包含首页。
+- 统一构建 `node scripts/build.cjs`，同时更新现有绿色本地入口、旧本地入口、根首页和 publish 首页。四份页面已校验字节一致。
+- 六组测试全部通过，测试数据源均指向当前绿色版；全部内联脚本通过语法检查。`.DS_Store` 已忽略。
+- 根 README、本文件顶部与 green-ui README 已更新维护规则，历史记录不再决定当前构建入口。
+- 发布基线 `b33edbb`；本条随主版发布提交保存。推送/线上核验结果将在后续记录补充。

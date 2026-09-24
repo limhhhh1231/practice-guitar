@@ -3,7 +3,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const context={};
 vm.createContext(context);
-vm.runInContext(fs.readFileSync('assets/fretboard-knowledge.js','utf8'),context);
+vm.runInContext(fs.readFileSync('green-ui/fretboard-knowledge.js','utf8'),context);
 const {targetFret,practicalShapes,uniqueShapes,staggerShapes,typicalShapes,intervals}=context.FretboardKnowledge;
 for(const [, ,semitones]of intervals.slice(1)){
  const combinations=practicalShapes(4,semitones);

@@ -1,17 +1,18 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),vm=require('node:vm');
-const source=fs.readFileSync('index.html','utf8');
+const source=fs.readFileSync('green-ui/index.html','utf8');
 const script=source.slice(source.indexOf("const chrom="),source.indexOf("['root','mode','display','notation']"));
 const elements=new Map();
 const document={getElementById(id){if(!elements.has(id))elements.set(id,{value:'',innerHTML:'',classList:{toggle(){},contains(){return false}}});return elements.get(id)},querySelectorAll(){return []}};
-const ctx={document};vm.createContext(ctx);vm.runInContext(script,ctx);
+const E=require('../green-ui/groove-engine.js');global.GrooveEngine=E;const C=require('../green-ui/practice-catalog.js');
+const ctx={document,GrooveEngine:E,PracticeCatalog:C};vm.createContext(ctx);vm.runInContext(script,ctx);
 function run(code){return vm.runInContext(code,ctx)}
 const opens=[4,11,7,2,9,4],names=['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'];
 let cases=0;
 for(const mode of ['major','minor','dorian','mixolydian'])for(let root=0;root<12;root++)for(const notation of ['fixed','movable'])for(let chord=-1;chord<7;chord++){
  run(`state={root:${root},mode:'${mode}',notation:'${notation}',display:'scale',start:0,end:12,only:true,chord:${chord}};render()`);
  const scale=Array.from(run('modes[state.mode].interval.map(x=>(state.root+x)%12)'));
- const tones=chord<0?[]:Array.from(run('chordPitchesFor(modes[state.mode].interval.map(x=>(state.root+x)%12),state.chord)'));
+ const tones=chord<0?[]:Array.from(run('currentHarmony().pcs'));
  const html=elements.get('notes').innerHTML;
  for(let string=1;string<=6;string++)for(let fret=1;fret<=12;fret++){
   const pc=(opens[string-1]+fret)%12;

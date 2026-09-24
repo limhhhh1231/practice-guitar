@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),vm=require('node:vm');
-const context={};vm.createContext(context);vm.runInContext(fs.readFileSync('assets/chord-shapes.js','utf8'),context);
+const context={};vm.createContext(context);vm.runInContext(fs.readFileSync('green-ui/chord-shapes.js','utf8'),context);
 const {qualities,specialCatalog,roles,chordDiagram,cagedRows,fullFretboardRows}=context.ChordShapes;
 assert.equal(qualities.length,8);
 assert.equal(qualities.reduce((n,q)=>n+q.shapes.length,0),40);
