@@ -37,12 +37,22 @@
     </div><div class="et-volumes">${[['Guitar','吉他',90],['Drum','鼓组',55],['Click','节拍器',50]].map(([id,name,value])=>`<label class="slider-label">${name}音量 <output id="et${id}Out">${value}%</output><input id="et${id}Volume" aria-label="${name}音量" type="range" min="0" max="100" value="${value}"></label>`).join('')}</div></details>
     </div></section>
     <div id="etError" class="error-note" role="alert" hidden></div>
-    <section class="card et-session"><div class="card-head"><div><h2>先听，再模唱，最后在琴上找音</h2><span id="etQuestionState" class="et-question-state">正在生成练习</span></div><button class="btn" id="etFocus">专注练习</button></div><div class="et-session-body"><div class="et-key-row"><span class="et-key-label">当前调</span><strong id="etKeyReadout"></strong><button class="btn et-key-toggle" id="etToggleKey" aria-pressed="true">隐藏</button></div><p id="etMeta" class="et-help"></p><p id="etStatus" role="status" aria-live="polite">准备好后开始</p><div class="et-actions"><button class="btn" id="etQuickGenerate">↻ 生成新题</button><button class="btn primary" id="etPlay" aria-pressed="false">▶ 播放当前题</button><button class="btn" id="etReplay">↺ 从头重听</button><button class="btn" id="etNext">下一题</button><button class="btn" id="etReveal" aria-expanded="false" aria-controls="etAnswer">揭晓旋律答案</button></div><p class="et-help et-shortcut">空格播放 / 停止 · 重听保持同一道题 · 揭晓后可点音符试听</p></div></section>
-    <section class="card et-answer" id="etAnswer" hidden><div class="card-head"><h2>旋律答案</h2>${select('简谱','etNotation',{movable:'首调（当前主音 = 1）',fixed:'固定调（C = 1）'},'movable')}</div><div class="et-answer-body"><p class="et-help">音名数字标记八度；首调数字相对主音，↑ 表示高八度。时值以四分音符为 1 拍；6/8 的 1 拍口令为附点四分。</p><div class="et-note-list" id="etNotes"></div><div class="et-score-wrap" id="etScore"></div><h3>推荐指板位置 · 标准六弦调弦</h3><div class="et-board-wrap" id="etBoard"></div><p class="et-help">图中数字是旋律出现顺序；蓝色为主音。详细弦品标在上方音符卡片中。</p></div></section>`;
+    <section class="card et-session et-workbench"><div class="card-head"><div><h2>先听，再模唱，最后在琴上找音</h2><span id="etQuestionState" class="et-question-state">正在生成练习</span></div><button class="btn" id="etFocus">专注练习</button></div><div class="et-session-body"><div class="et-workbench-grid"><div class="et-listen-column"><div class="et-key-row"><span class="et-key-label">当前调</span><strong id="etKeyReadout"></strong><button class="btn et-key-toggle" id="etToggleKey" aria-pressed="true">隐藏</button></div><p id="etMeta" class="et-help"></p><p id="etStatus" role="status" aria-live="polite">准备好后开始</p><div class="et-actions"><button class="btn" id="etQuickGenerate">↻ 生成新题</button><button class="btn primary" id="etPlay" aria-pressed="false">▶ 播放当前题</button><button class="btn" id="etReplay">↺ 从头重听</button><button class="btn" id="etNext">下一题</button></div><p class="et-help et-shortcut">空格播放 / 停止 · 重听保持同一道题 · 揭晓后可点音符试听</p></div>
+    <section class="card et-answer" id="etAnswer" hidden><div class="card-head"><h2>旋律答案</h2>${select('简谱','etNotation',{movable:'首调（当前主音 = 1）',fixed:'固定调（C = 1）'},'movable')}</div><div class="et-answer-body"><p class="et-help">音名数字标记八度；首调数字相对主音，↑ 表示高八度。时值以四分音符为 1 拍；6/8 的 1 拍口令为附点四分。</p><div class="et-note-list" id="etNotes"></div><div class="et-score-wrap" id="etScore"></div><h3>推荐指板位置 · 标准六弦调弦</h3><div class="et-board-wrap" id="etBoard"></div><p class="et-help">格内上方是音高，下方是旋律顺序；多个序号表示旋律重复使用同一个音。蓝色为主音，详细弦品标在上方音符卡片中。</p></div></section>
+    <section class="card" id="etAnswerPlaceholder"><div class="card-head"><div><h2>旋律答案</h2><span class="et-answer-state">等待核对</span></div></div><div class="et-answer-lock"><strong>先听，再在琴上找出来</strong><p>答案已隐藏。完成模唱和找音后，再核对这一题的旋律、节奏与指板位置。</p><button class="btn" id="etReveal" aria-expanded="false" aria-controls="etAnswer">核对旋律答案</button></div></section></div></div></section>`;
     $('etGenerate').onclick=generate;$('etQuickGenerate').onclick=generate;$('etNext').onclick=()=>{if(!rated&&question&&!confirm('本题尚未记录自评，跳过并生成下一题？'))return;generate();};
     $('etPlay').onclick=event=>{event.preventDefault();togglePlay();};$('etReplay').onclick=event=>{event.preventDefault();void play();};
     $('etToggleKey').onclick=()=>{keyVisible=!keyVisible;renderKey();notifyTraining();};
-    $('etReveal').onclick=()=>{answerVisible=!answerVisible;if(answerVisible){if(!hints.has('answer'))usedHelpBeforeAnswer=hints.size>0;hints.add('answer');}renderAnswer();refreshRating();notifyTraining();};
+    $('etReveal').onclick=()=>{
+      if(!question){
+        answerVisible=false;renderAnswer();setAnswerPrompt(false);
+        setText('etStatus','请先生成新题，或点击播放自动生成题目');
+        return;
+      }
+      answerVisible=!answerVisible;
+      if(answerVisible){if(!hints.has('answer'))usedHelpBeforeAnswer=hints.size>0;hints.add('answer');}
+      renderAnswer();refreshRating();notifyTraining();
+    };
     $('etNotation').onchange=renderAnswer;
     $('etFocus').onclick=()=>{focused=!focused;applyFocus();};
     $('etScale').onchange=()=>{$('etScalePool').hidden=$('etScale').value!=='random';};
@@ -56,7 +66,7 @@
     });
     for(const id of ['etTempo','etTempoSlider'])$(id).oninput=()=>{const value=Number($(id).value);if(!Number.isFinite(value)||value<40||value>220)return;$('etTempo').value=$('etTempoSlider').value=value;$('etTempoOut').value=value+' BPM';if(player.playing)player.stop('速度已更改，重听时按新速度播放');renderMeta();};
     for(const id of ['Guitar','Drum','Click'])$('et'+id+'Volume').oninput=()=>{$('et'+id+'Out').value=$('et'+id+'Volume').value+'%';player.mix(mixSettings());};
-    const assist=document.createElement('section');assist.className='card et-assist';assist.innerHTML='<div class="card-head"><h2>分级提示与自评</h2></div><div class="et-session-body"><div class="et-actions"><button class="btn" id="etContour">旋律走向</button><button class="btn" id="etFirst">提示首音</button><label>指定音 <select id="etHintIndex" aria-label="要提示的音符序号"></select></label><button class="btn" id="etOne">揭示这个音</button></div><p id="etHintText" role="status">先不看提示，试着模唱和找音。</p><div class="et-actions"><button class="btn" data-ear-rate="independent">独立听出</button><button class="btn" data-ear-rate="hinted">提示后听出</button><button class="btn" data-ear-rate="difficult">还没听出</button><button class="btn" id="etReview">复习困难题</button></div><p id="etRatingStatus" class="et-help">自评记录不等于自动音准评分。</p></div>';$('etAnswer').before(assist);
+    const assist=document.createElement('section');assist.className='card et-assist';assist.innerHTML='<div class="card-head"><h2>分级提示与自评</h2></div><div class="et-session-body"><div class="et-actions"><button class="btn" id="etContour">旋律走向</button><button class="btn" id="etFirst">提示首音</button><label>指定音 <select id="etHintIndex" aria-label="要提示的音符序号"></select></label><button class="btn" id="etOne">揭示这个音</button></div><p id="etHintText" role="status">先不看提示，试着模唱和找音。</p><div class="et-actions"><button class="btn" data-ear-rate="independent">独立听出</button><button class="btn" data-ear-rate="hinted">提示后听出</button><button class="btn" data-ear-rate="difficult">还没听出</button><button class="btn" id="etReview">复习困难题</button></div><p id="etRatingStatus" class="et-help">自评记录不等于自动音准评分。</p></div>';panel.append(assist);
     $('etContour').onclick=()=>{if(!question)return;hints.add('contour');const ns=question.events.filter(e=>!e.rest).map(e=>e.note.midi);$('etHintText').textContent='旋律走向：'+ns.slice(1).map((v,i)=>v>ns[i]?'↑ 上行':v<ns[i]?'↓ 下行':'→ 同音').join(' · ');notifyTraining();};
     $('etFirst').onclick=()=>revealNote(0);
     $('etOne').onclick=()=>revealNote(+$('etHintIndex').value);
@@ -70,23 +80,19 @@
   function installPracticeLayout(assist){
     const panel=$('earPanel'),settingsCard=panel.querySelector('.et-settings'),settingsBody=settingsCard.querySelector('.et-settings-body'),oldGenerate=$('etGenerate');
     const details=document.createElement('details');details.id='etSettingsDrawer';const summary=document.createElement('summary');summary.textContent='练习设置 · 音数 / 调式 / 节奏 / 伴奏';details.append(summary,settingsBody);oldGenerate.remove();settingsCard.querySelector('.card-head').remove();settingsCard.append(details);
-    const session=panel.querySelector('.et-session');settingsCard.before(session);session.classList.add('et-workbench');
-    const body=session.querySelector('.et-session-body'),workspace=document.createElement('div');workspace.className='et-workbench-grid';
-    const control=document.createElement('div');control.className='et-listen-column';
-    while(body.firstChild)control.append(body.firstChild);workspace.append(control,$('etAnswer'));body.append(workspace);
-    const rateRow=assist.querySelector('[data-ear-rate]').parentElement;rateRow.classList.add('et-rating-choices');
+    const session=panel.querySelector('.et-session');settingsCard.before(session);
+    const assistBody=assist.querySelector('.et-session-body'),hintActions=assistBody.querySelector('.et-actions'),hintText=$('etHintText'),rateRow=assist.querySelector('[data-ear-rate]').parentElement,ratingStatus=$('etRatingStatus'),review=$('etReview');
+    assist.classList.add('et-assist-standalone');session.after(assist);assistBody.classList.add('et-assist-grid');
+    const hintsBox=document.createElement('section');hintsBox.className='et-assist-hints';hintsBox.innerHTML='<h3>需要一点提示？</h3><p class="et-help">按需要逐步揭示信息，使用提示后将不能标记为“独立听出”。</p>';
+    hintsBox.append(hintActions,hintText);review.textContent='复习困难题';hintsBox.append(review);
+    rateRow.classList.add('et-rating-choices');
     const rateBox=document.createElement('section');rateBox.className='et-rating-box';rateBox.innerHTML='<h3>这次听出来了吗？</h3><p class="et-help">先尝试找音，再核对答案。选一项后确认保存，不会立即换题。</p>';
-    rateBox.append(rateRow,$('etRatingStatus'));const actions=document.createElement('div');actions.className='et-actions';actions.innerHTML='<button class="btn primary" id="etConfirmRating" disabled>确认本题自评</button>';
-    actions.append($('etNext'));rateBox.append(actions);$('etNext').textContent='下一题 →';control.append(rateBox);
-    const hintsBox=document.createElement('details');hintsBox.className='et-hints-drawer';hintsBox.innerHTML='<summary>需要一点提示？</summary>';
-    hintsBox.append(assist.querySelector('.et-session-body'));control.insertBefore(hintsBox,rateBox);assist.remove();
-    $('etReview').textContent='复习困难题';hintsBox.append($('etReview'));
+    rateBox.append(rateRow,ratingStatus);const actions=document.createElement('div');actions.className='et-actions';actions.innerHTML='<button class="btn primary" id="etConfirmRating" disabled>确认本题自评</button>';
+    actions.append($('etNext'));rateBox.append(actions);$('etNext').textContent='下一题 →';assistBody.replaceChildren(hintsBox,rateBox);
     $('etConfirmRating').onclick=()=>rate(pendingRating);
     const launch=document.createElement('button');launch.className='btn';launch.id='etEditSettings';launch.textContent='调整练习设置';launch.onclick=()=>{details.open=!details.open;if(details.open)details.scrollIntoView({block:'start',behavior:'smooth'});};session.querySelector('.card-head').append(launch);
     const generateButton=document.createElement('button');generateButton.id='etGenerate';generateButton.className='btn primary';generateButton.textContent='应用设置并生成新题';generateButton.onclick=()=>{generate();details.open=false;session.scrollIntoView({block:'start'});};settingsBody.append(generateButton);
     const board=$('etBoard'),boardDetails=document.createElement('details');boardDetails.className='et-board-details';boardDetails.innerHTML='<summary>查看推荐指板位置</summary>';board.previousElementSibling?.remove();board.before(boardDetails);boardDetails.append(board);
-    const placeholder=document.createElement('div');placeholder.id='etAnswerPlaceholder';placeholder.innerHTML='<strong>先听，再在琴上找出来</strong><p>点击「核对旋律答案」，答案就在这里展开。调性是否可见可以独立控制。</p>';workspace.append(placeholder);
-    $('etReveal').textContent='核对旋律答案';
   }
   function refreshRating(){
     const independentAllowed=!usedHelpBeforeAnswer&&!hints.has('contour')&&!hints.has('note');
@@ -112,15 +118,22 @@
     if(node)node.textContent=text;
   }
   function error(message){const node=$('etError');if(!node)return;if(message)node.removeAttribute('hidden');else node.setAttribute('hidden','');node.textContent=message||'';}
+  function setAnswerPrompt(ready){
+    const placeholder=$('etAnswerPlaceholder');if(!placeholder)return;
+    const state=placeholder.querySelector('.et-answer-state'),title=placeholder.querySelector('.et-answer-lock strong'),copy=placeholder.querySelector('.et-answer-lock p');
+    if(state)state.textContent=ready?'等待核对':'尚未生成题目';
+    if(title)title.textContent=ready?'先听，再在琴上找出来':'请先生成一条听感练习';
+    if(copy)copy.textContent=ready?'答案已隐藏。完成模唱和找音后，再核对这一题的旋律、节奏与指板位置。':'点击左侧“生成新题”，或直接点击“播放当前题”自动生成后再核对答案。';
+  }
   function generate(){
     player.stop();const previous=question;let phase='读取设置';
     try{
       const next=read();phase='生成旋律';const generated=G.generate(next,Math.floor(Math.random()*0x7fffffff));
-      phase='更新练习界面';settings=next;question=generated;keyVisible=settings.visibility!=='hidden';answerVisible=false;resetHints();error('');renderKey();renderMeta();renderAnswer();
+      phase='更新练习界面';settings=next;question=generated;keyVisible=settings.visibility!=='hidden';answerVisible=false;resetHints();error('');setAnswerPrompt(true);renderKey();renderMeta();renderAnswer();
       questionState('当前题已生成 · '+question.count+' 个音');setText('etStatus','新练习已生成 · 点击“播放当前题”');
       phase='保存练习状态';notifyTraining();return true;
     }catch(e){
-      question=previous;questionState(previous?'生成失败 · 已保留上一题':'生成失败');
+      question=previous;questionState(previous?'生成失败 · 已保留上一题':'生成失败');if(!previous)setAnswerPrompt(false);
       error('生成失败（'+phase+'）：'+(e?.message||String(e)));
       setText('etStatus',previous?'新题生成失败，可继续播放上一题':'请检查设置后重新生成');
       return false;
@@ -139,7 +152,12 @@
     const placeholder=$('etAnswerPlaceholder'),answer=$('etAnswer'),reveal=$('etReveal');
     if(placeholder)placeholder.hidden=answerVisible;
     if(answer)answer.hidden=!answerVisible;
-    if(reveal){reveal.setAttribute('aria-expanded',String(answerVisible));reveal.textContent=answerVisible?'收起旋律答案':'核对旋律答案';}
+    if(reveal){
+      const target=answerVisible?answer?.querySelector('.card-head'):placeholder?.querySelector('.et-answer-lock');
+      if(target&&reveal.parentElement!==target)target.append(reveal);
+      reveal.setAttribute('aria-expanded',String(answerVisible));
+      reveal.textContent=answerVisible?'收起旋律答案':'核对旋律答案';
+    }
     // Clear hidden answers so notes are not exposed in tooltips/accessibility text.
     const noteList=$('etNotes'),board=$('etBoard'),score=$('etScore');
     if(!answerVisible){noteList?.replaceChildren();board?.replaceChildren();score?.replaceChildren();return;}
@@ -161,9 +179,8 @@
     for(let s=1;s<=6;s++)svg+=`<text x="8" y="${y(s)+4}" class="et-board-label">${s} 弦</text><path d="M 44 ${y(s)} H 786" class="et-wire"/>`;
     for(let f=0;f<=12;f++)svg+=`<text x="${x(f)}" y="17" text-anchor="middle" class="et-board-label">${f}</text><path d="M ${x(f)+29} 25 V 230" class="et-fret"/>`;
     const positions=new Map();notes.forEach((e,i)=>{const key=e.note.string+','+e.note.fret;if(!positions.has(key))positions.set(key,[]);positions.get(key).push(i+1);});
-    for(const [pos,order]of positions){const [s,f]=pos.split(',').map(Number),rootNote=E.mod([64,59,55,50,45,40][s-1]+f)===question.key;
-      svg+=`<rect x="${x(f)-25}" y="${y(s)-15}" width="50" height="30" rx="4" fill="${rootNote?'#65b8ed':'#85dfa1'}"/><text x="${x(f)}" y="${y(s)+4}" text-anchor="middle" class="et-board-order">${order.slice(0,4).join('·')}</text>`;
-      if(order.length>4)svg+=`<text x="${x(f)}" y="${y(s)+13}" text-anchor="middle" class="et-board-order">${order.slice(4).join('·')}</text>`;
+    for(const [pos,order]of positions){const [s,f]=pos.split(',').map(Number),rootNote=E.mod([64,59,55,50,45,40][s-1]+f)===question.key,note=notes[order[0]-1],sequence=order.join('·');
+      svg+=`<g><title>${E.names[E.mod(note.note.midi)]}${Math.floor(note.note.midi/12)-1} · 第 ${order.join('、')} 音${order.length>1?'（同音重复）':''}</title><rect x="${x(f)-25}" y="${y(s)-15}" width="50" height="30" rx="4" fill="${rootNote?'#65b8ed':'#85dfa1'}"/><text x="${x(f)}" y="${y(s)-1}" text-anchor="middle" class="et-board-note">${label(note.note.midi)}</text><text x="${x(f)}" y="${y(s)+11}" text-anchor="middle" class="et-board-order">第 ${sequence} 音</text></g>`;
     }
     board.innerHTML=svg+'</svg>';
   }
@@ -191,7 +208,7 @@
     $('etRepeatMode').value=settings.repeats===0?'infinite':'finite';$('etRepeats').disabled=settings.repeats===0;$('etCue').checked=settings.cue;$('etDrums').checked=settings.drums;$('etScalePool').hidden=true;
     document.querySelectorAll('#etMaterials [data-material]').forEach(b=>{const on=settings.materials.includes(b.dataset.material);b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
     $('etTempoOut').value=settings.tempo+' BPM';for(const id of ['Guitar','Drum','Click'])$('et'+id+'Out').value=settings[id.toLowerCase()+'Volume']+'%';
-    keyVisible=data.keyVisible??settings.visibility!=='hidden';answerVisible=!!data.answerVisible;resetHints();hints=new Set(data.hints||[]);revealedNotes=new Set(data.revealedNotes||[]);rated=!!data.rated;pendingRating=data.pendingRating||null;usedHelpBeforeAnswer=!!data.usedHelpBeforeAnswer;document.querySelectorAll('[data-ear-rate]').forEach(b=>b.disabled=rated);if(rated)$('etRatingStatus').textContent='本题已自评 · 可生成下一题';if(hints.size)$('etHintText').textContent='已恢复本题提示记录。可再次点击提示查看；本题不计为独立听出。';refreshRating();error('');renderKey();renderMeta();renderAnswer();$('etStatus').textContent='已载入原题 · 点击播放';
+    keyVisible=data.keyVisible??settings.visibility!=='hidden';answerVisible=!!data.answerVisible;resetHints();hints=new Set(data.hints||[]);revealedNotes=new Set(data.revealedNotes||[]);rated=!!data.rated;pendingRating=data.pendingRating||null;usedHelpBeforeAnswer=!!data.usedHelpBeforeAnswer;document.querySelectorAll('[data-ear-rate]').forEach(b=>b.disabled=rated);if(rated)$('etRatingStatus').textContent='本题已自评 · 可生成下一题';if(hints.size)$('etHintText').textContent='已恢复本题提示记录。可再次点击提示查看；本题不计为独立听出。';refreshRating();error('');setAnswerPrompt(true);renderKey();renderMeta();renderAnswer();$('etStatus').textContent='已载入原题 · 点击播放';
   }
   root.EarTraining={init,stop,togglePlay,load,snapshot};
 })(globalThis);
